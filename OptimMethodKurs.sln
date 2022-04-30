@@ -5,23 +5,25 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{0FFFA316-0897-42A6-98A3-6BA677944F6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "Repository\Repository.csproj", "{0C0A88E6-1FC2-4E93-802B-A662AB4C1458}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repository", "Repository\Repository.csproj", "{0C0A88E6-1FC2-4E93-802B-A662AB4C1458}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebServer", "WebServer\WebServer.csproj", "{1AB00BB6-9111-4C9A-B063-B94AADD7CA97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServer", "WebServer\WebServer.csproj", "{1AB00BB6-9111-4C9A-B063-B94AADD7CA97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutofacDependence", "AutofacDependence\AutofacDependence.csproj", "{C58F2BA0-ECB2-4D59-A0DB-5ABF93FE56EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutofacDependence", "AutofacDependence\AutofacDependence.csproj", "{C58F2BA0-ECB2-4D59-A0DB-5ABF93FE56EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Administrator", "Administrator\Administrator.csproj", "{87DDC21F-FF82-43F9-AB8F-45A75AD7FCA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Administrator", "Administrator\Administrator.csproj", "{87DDC21F-FF82-43F9-AB8F-45A75AD7FCA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User", "User\User.csproj", "{D6D560B1-10FE-48A7-9601-3A6C1DEB900C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User", "User\User.csproj", "{D6D560B1-10FE-48A7-9601-3A6C1DEB900C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{D1ED7955-50D5-4084-9F75-8C6EF1529EA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csproj", "{D1ED7955-50D5-4084-9F75-8C6EF1529EA9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BLL", "BLL", "{AAD84189-CC27-4148-BE68-00585036C7CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModelsView", "ModelsView\ModelsView.csproj", "{086232B7-78FF-47E7-B7BA-750AFCBD1890}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelsView", "ModelsView\ModelsView.csproj", "{086232B7-78FF-47E7-B7BA-750AFCBD1890}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{11859DDF-6006-410F-9183-7610CBC7B208}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{11859DDF-6006-410F-9183-7610CBC7B208}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesMVVM", "ServicesMVVM\ServicesMVVM.csproj", "{C4963443-2A05-44EA-9E29-2E782107F689}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +63,10 @@ Global
 		{11859DDF-6006-410F-9183-7610CBC7B208}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11859DDF-6006-410F-9183-7610CBC7B208}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11859DDF-6006-410F-9183-7610CBC7B208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4963443-2A05-44EA-9E29-2E782107F689}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4963443-2A05-44EA-9E29-2E782107F689}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4963443-2A05-44EA-9E29-2E782107F689}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4963443-2A05-44EA-9E29-2E782107F689}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

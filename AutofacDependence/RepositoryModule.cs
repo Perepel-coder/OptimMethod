@@ -12,7 +12,7 @@ namespace AutofacDependence
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(c => new SqlLiteRepositoryContextFactory("Data Source = DatabaseMO.db"))
+            builder.Register(c => new SqlLiteRepositoryContextFactory(@"Data Source = ..\..\..\..\WebServer\DatabaseMO.db"))
                 .As<ISqlLiteRepositoryContextFactory>();
         }
     }
