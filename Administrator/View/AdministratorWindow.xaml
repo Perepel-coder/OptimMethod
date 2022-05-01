@@ -5,8 +5,67 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Administrator.View"
         mc:Ignorable="d"
-        Title="AdministratorWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Окно администратора" Height="350" Width="580">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Width" Value="auto"></Setter>
+            <Setter Property="Height" Value="40"></Setter>
+            <Setter Property="Margin" Value="0 3"></Setter>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="0 3"></Setter>
+            <Setter Property="Height" Value="22"></Setter>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="0 3"></Setter>
+        </Style>
+    </Window.Resources>
+    <StackPanel>
+        <TabControl>
+            <TabItem Header="Пользователи">
+                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
+                    <StackPanel Margin="5,0,5,0">
+                        <TextBlock Text="Список пользователей"></TextBlock>
+                        <DataGrid ItemsSource ="{Binding Path=UsersTable, Mode=TwoWay}"
+                                  SelectedItem="{Binding SelectedUserRow}"
+                                  CanUserDeleteRows="False" CanUserAddRows="False" IsReadOnly="True"
+                                  Width="400" Height="200">
+                        </DataGrid>
+                        <Button Content="Обновить" Command="{Binding UpdateUsersList}"></Button>
+                    </StackPanel>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Width="52" Text="Login"></TextBlock>
+                            <TextBox Width="70" Text="{Binding UserView.Login}"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Width="52" Text="Password"></TextBlock>
+                            <TextBox Width="70" Text="{Binding UserView.Password}"></TextBox>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Width="52" Text="Роль"></TextBlock>
+                            <ComboBox Width="70" ItemsSource="{Binding Path=Roles}"    
+                                      SelectedItem="{Binding Path=SelectedRole}"  
+                                      DisplayMemberPath="Role">
+                            </ComboBox>
+                        </StackPanel>
+                        <StackPanel>
+                            <Button Content="Добавить" Command="{Binding AddUser}"></Button>
+                            <Button Content="Удалить" Command="{Binding DeleteUser}"></Button>
+                            <Button Content="Изменить" Command="{Binding EditUser}"></Button>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Параметры">
+
+            </TabItem>
+            <TabItem Header="Задачи оптимизации">
+
+            </TabItem>
+            <TabItem Header="Методы оптимизации">
+
+            </TabItem>
+        </TabControl>
+    </StackPanel>
 </Window>

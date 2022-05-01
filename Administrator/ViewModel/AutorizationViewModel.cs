@@ -9,6 +9,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Administrator.View;
 using Autofac;
 using AutofacDependence;
 using ProgramSystem.Bll.Services.Interfaces;
@@ -88,12 +89,10 @@ namespace Administrator.ViewModel
                 builderBase.RegisterModule(new ServicesModule());
                 var containerBase = builderBase.Build();
 
-                MessageBox.Show("Вход под исследователем\n Пользователь " + user.Login);
+                var viewmodelBase = new AdministrationViewModel(containerBase.Resolve<IUserService>());
+                var viewBase = new AdministratorWindow() { DataContext = viewmodelBase };
 
-                //var viewmodelBase = new MainWindowProgramViewModel(containerBase.Resolve<IMathService>());
-                //var viewBase = new MainWindowProgram { DataContext = viewmodelBase };
-
-                //viewBase.Show();
+                viewBase.Show();
             }
         }
 
