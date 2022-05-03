@@ -84,9 +84,9 @@ namespace Administrator.ViewModel
 
         #endregion
 
+
         #region Properties
 
-        // Пользователи
         #region пользователи
 
         public string? Login
@@ -136,9 +136,6 @@ namespace Administrator.ViewModel
         }
 
         #endregion
-
-
-        // Параметры
         #region параметры
         public string? ParameterName
         {
@@ -184,8 +181,6 @@ namespace Administrator.ViewModel
 
 
         #endregion
-
-        // Ед измерения
         #region едизмерения
 
         public string? UnitOfMeasName
@@ -215,6 +210,7 @@ namespace Administrator.ViewModel
 
         #endregion
 
+
         #region Command
 
         #region Команды_Пользователей
@@ -224,7 +220,6 @@ namespace Administrator.ViewModel
         public AsyncCommand DeleteUserCommand { get; set; }
         public AsyncCommand EditUserCommand { get; set; }
         #endregion
-
         #region Команды_Параметров
         // Параметры
         public AsyncCommand UpdateParametersCommand { get; set; }
@@ -234,7 +229,6 @@ namespace Administrator.ViewModel
         public RelayCommand ClearParameterPropertiesCommand { get; set; }
 
         #endregion
-
         #region Команды_Ед_измерений
         // ед. измерения
         public RelayCommand ClearUnitOfMeasCommand { get; set; }
@@ -244,6 +238,7 @@ namespace Administrator.ViewModel
         #endregion
 
         #endregion
+
 
         #region CanMethod
 
@@ -258,7 +253,6 @@ namespace Administrator.ViewModel
                                       && !string.IsNullOrEmpty(Password)
                                       && !string.IsNullOrEmpty(SelectedRole);
         #endregion
-
         #region Can_Параметры
         // Параметры
         private bool CanAddParameter() => !string.IsNullOrEmpty(ParameterName)
@@ -269,7 +263,6 @@ namespace Administrator.ViewModel
                                            && SelectedParameterRow != null;
 
         #endregion
-
         #region Can_ЕдИзмерения
 
         private bool CanAddUnitOfMeas() => !string.IsNullOrEmpty(UnitOfMeasName);
@@ -277,8 +270,9 @@ namespace Administrator.ViewModel
 
         #endregion
 
-
         #endregion
+
+
         #region Methods
 
         #region Методы_пользователей
@@ -351,7 +345,6 @@ namespace Administrator.ViewModel
 
 
         #endregion
-
         #region Методы_параметров
         // Парамерты
         private async Task UpdateParametersTableAsync()
@@ -405,7 +398,6 @@ namespace Administrator.ViewModel
 
 
         #endregion
-
         #region Методы_ЕдИзмерения
 
         private void ClearUnitOfMeas()
