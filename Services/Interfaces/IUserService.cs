@@ -39,4 +39,7 @@ public interface IUserService
     /// <param name="password"></param>
     /// <returns></returns>
     UserView? GetAccountByLoginPassword(string login, string password);
+
+    bool UserIsYetRegister(string login);
+    ICollection<string> GetRolesCollection();
 }

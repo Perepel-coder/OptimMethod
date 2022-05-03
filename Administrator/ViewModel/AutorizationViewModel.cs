@@ -13,6 +13,7 @@ using Administrator.View;
 using Autofac;
 using AutofacDependence;
 using ProgramSystem.Bll.Services.Interfaces;
+using Services.Interfaces;
 using ServicesMVVM;
 
 namespace Administrator.ViewModel
@@ -76,23 +77,20 @@ namespace Administrator.ViewModel
                 builderBase.RegisterModule(new ServicesModule());
                 var containerBase = builderBase.Build();
 
-                MessageBox.Show("Вход под админом\n Пользователь " + user.Login);
-                //var viewmodelBase = new WindowEditViewModel();
-                //var viewBase = new WindowEdit { DataContext = viewmodelBase };
+                var viewmodelBase = new AdministrationViewModel(
+                    containerBase.Resolve<IUserService>(), 
+                    containerBase.Resolve<IMethodService>(),
+                    containerBase.Resolve<IParameterService>(),
+                    containerBase.Resolve<ITasksService>(),
+                    containerBase.Resolve<IUnitOfMeasService>());
 
-                //viewBase.Show();
-            }
-            else if (user.Role == "user")
-            {
-                var builderBase = new ContainerBuilder();
-                builderBase.RegisterModule(new RepositoryModule());
-                builderBase.RegisterModule(new ServicesModule());
-                var containerBase = builderBase.Build();
-
-                var viewmodelBase = new AdministrationViewModel(containerBase.Resolve<IUserService>());
                 var viewBase = new AdministratorWindow() { DataContext = viewmodelBase };
 
                 viewBase.Show();
+            }
+            else if (user.Role == "user")
+            {
+                // пользователь
             }
         }
 

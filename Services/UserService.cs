@@ -101,5 +101,28 @@ namespace Services
             };
             return user;
         }
+
+        public bool UserIsYetRegister(string login)
+        {
+            using var uow = new UnitOfWork(_contextFactory.Create());
+            var user = uow.UserRepository.GetEntityQuery().FirstOrDefault(x => x.Login == login);
+            if (user != null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public ICollection<string> GetRolesCollection()
+        {
+            ICollection<string> roles;
+            using (var uow = new UnitOfWork(_contextFactory.Create()))
+            {
+                roles = uow.UserRepository.GetEntityQuery().Select(x => x.Role).Distinct().ToList();
+            }
+
+            return roles;
+        }
     }
 }

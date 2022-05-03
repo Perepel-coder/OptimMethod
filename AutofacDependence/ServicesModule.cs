@@ -7,6 +7,7 @@ using Autofac;
 using ProgramSystem.Bll.Services.Interfaces;
 using Repository.factories;
 using Services;
+using Services.Interfaces;
 
 namespace AutofacDependence
 {
@@ -16,6 +17,14 @@ namespace AutofacDependence
         {
             builder.Register(c => new UserService(c.Resolve<ISqlLiteRepositoryContextFactory>()))
                 .As<IUserService>();
+            builder.Register(c => new ParametersService(c.Resolve<ISqlLiteRepositoryContextFactory>()))
+                .As<IParameterService>();
+            builder.Register(c => new MethodService(c.Resolve<ISqlLiteRepositoryContextFactory>()))
+                .As<IMethodService>();
+            builder.Register(c => new TasksService(c.Resolve<ISqlLiteRepositoryContextFactory>()))
+                .As<ITasksService>();
+            builder.Register(c => new UnitOfMeasService(c.Resolve<ISqlLiteRepositoryContextFactory>()))
+                .As<IUnitOfMeasService>();
         }
     }
 }
