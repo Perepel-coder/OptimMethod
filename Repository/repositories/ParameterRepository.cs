@@ -10,3 +10,12 @@ public class ParameterRepository : DataBaseRepository<Parameter, RepositoryConte
     }
 
 }
+
+
+public class MathodOptimizationRepository : DataBaseRepository<Method, RepositoryContext>, IMethodOptimizationRepository
+{
+    public MathodOptimizationRepository(RepositoryContext context) : base(context)
+    {
+    }
+
+}

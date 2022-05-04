@@ -18,6 +18,7 @@ namespace Repository
         public DbSet<UnitOfMeas> UnitsOfMeas { get; set; } = null!;
         public DbSet<Parameter> Parameters { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
+        public DbSet<Method> MethodsOptimization { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

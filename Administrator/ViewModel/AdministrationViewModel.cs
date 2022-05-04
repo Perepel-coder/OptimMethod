@@ -58,6 +58,16 @@ namespace Administrator.ViewModel
             ClearUnitOfMeasCommand = new RelayCommand(obj => ClearUnitOfMeas());
             AddUnitOfMeasCommand = new AsyncCommand(AddUnitOfMeasAsync, CanAddUnitOfMeas);
             DeleteUnitOfMeasCommand = new AsyncCommand(RemoveUnitOfMeasAsync, CanDeleteUnitOfMeas);
+
+            // методы оптимизации
+            OptimizationMethodsTable = new ObservableCollection<OptimizationMethodView>(_methodService.GetAllOptimizationMethods());
+            UpdateTableOptimizationMethodCommand = new AsyncCommand(UpdateTableMethodsOptimizationAsync, () => true);
+            ClearPropertiesMehodsOptimizationCommand =
+                new RelayCommand(obj => ClearProperiesOfOptimizatiomMethods());
+            AddOptimizationMethodCommand = new AsyncCommand(AddOptimizationMethodAsync, CanAddOptimizationMethod);
+            DeleteOptimizationMethodCommand = new AsyncCommand(DeleteOptimizationMethodAsync, CanDeleteOptimizationMethod);
+            EditOptimizationMethodAsyncCommand =
+                new AsyncCommand(EditOptimizationMethodAsync, CanEditOptimizationMethod);
         }
 
         #region Fields
@@ -82,6 +92,11 @@ namespace Administrator.ViewModel
         private ObservableCollection<UnitOfMeasView> ? _unitOfMeasTable;
         private UnitOfMeasView? _selectedUnitOfMeasRow;
 
+        // методы оптимизации
+        private string? _methodOptimizationName;
+        private OptimizationMethodView ? _selectedOptimizationMethodRow;
+        private ObservableCollection<OptimizationMethodView> ? _optimizationMethodsTable;
+        private bool _isRealisedOptimizationMethod;
         #endregion
 
 
@@ -207,6 +222,38 @@ namespace Administrator.ViewModel
         }
 
         #endregion
+        #region методы_оптимизации
+
+        public string? MethodOptimizationName
+        {
+            get => _methodOptimizationName;
+            set => this.RaiseAndSetIfChanged(ref _methodOptimizationName, value);
+        }
+        public OptimizationMethodView? SelectedOptimizationMethodRow
+        {
+            get => _selectedOptimizationMethodRow;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedOptimizationMethodRow, value);
+                if (_selectedOptimizationMethodRow != null)
+                {
+                    MethodOptimizationName = _selectedOptimizationMethodRow.Name;
+                    IsRealisedOptimizationMethod = _selectedOptimizationMethodRow.IsRealized;
+                }
+            }
+        }
+        public ObservableCollection<OptimizationMethodView>? OptimizationMethodsTable
+        {
+            get => _optimizationMethodsTable;
+            set => this.RaiseAndSetIfChanged(ref _optimizationMethodsTable, value);
+        }
+        public bool IsRealisedOptimizationMethod
+        {
+            get => _isRealisedOptimizationMethod;
+            set => this.RaiseAndSetIfChanged(ref _isRealisedOptimizationMethod, value);
+
+        }
+        #endregion
 
         #endregion
 
@@ -235,6 +282,14 @@ namespace Administrator.ViewModel
         public AsyncCommand AddUnitOfMeasCommand { get; set; }
         public AsyncCommand DeleteUnitOfMeasCommand { get; set; }
         public AsyncCommand UpdateUnitOfMeasTableCommand { get; set; }
+        #endregion
+
+        #region Команды_Методы_оптимизации
+        public AsyncCommand UpdateTableOptimizationMethodCommand { get; set; }
+        public RelayCommand ClearPropertiesMehodsOptimizationCommand { get; set; }
+        public AsyncCommand AddOptimizationMethodCommand { get; set; }
+        public AsyncCommand DeleteOptimizationMethodCommand { get; set; }
+        public AsyncCommand EditOptimizationMethodAsyncCommand { get; set; }
         #endregion
 
         #endregion
@@ -268,6 +323,14 @@ namespace Administrator.ViewModel
         private bool CanAddUnitOfMeas() => !string.IsNullOrEmpty(UnitOfMeasName);
         private bool CanDeleteUnitOfMeas() => SelectedUnitOfMeasRow != null;
 
+        #endregion
+        #region Can_Методы_оптимизации
+
+        private bool CanAddOptimizationMethod() => !string.IsNullOrEmpty(MethodOptimizationName);
+        private bool CanDeleteOptimizationMethod() => SelectedOptimizationMethodRow != null;
+
+        private bool CanEditOptimizationMethod() => SelectedOptimizationMethodRow != null &&
+                                                    !string.IsNullOrEmpty(MethodOptimizationName);
         #endregion
 
         #endregion
@@ -424,7 +487,40 @@ namespace Administrator.ViewModel
             UnitOfMeasTable = new ObservableCollection<UnitOfMeasView>(await _unitOfMeasService.GetAllUnitOfMeasAsync());
         }
         #endregion
+        #region Методы_Методы_оптимизации
 
+        private async Task UpdateTableMethodsOptimizationAsync()
+        {
+            OptimizationMethodsTable =
+                new ObservableCollection<OptimizationMethodView>(await _methodService.GetAllOptimizationMethodsAsync());
+        }
+
+        private void ClearProperiesOfOptimizatiomMethods()
+        {
+            SelectedOptimizationMethodRow = null;
+            MethodOptimizationName = null;
+        }
+        private async Task AddOptimizationMethodAsync()
+        {
+            if(!string.IsNullOrEmpty( MethodOptimizationName)) 
+                await _methodService.AddOptimizationMethodAsync(MethodOptimizationName, IsRealisedOptimizationMethod);
+            await UpdateTableMethodsOptimizationAsync();
+        }
+
+        private async Task DeleteOptimizationMethodAsync()
+        {
+            if (SelectedOptimizationMethodRow != null)
+                await _methodService.DeleteOptimizationMethodAsync(SelectedOptimizationMethodRow.Id);
+            await UpdateTableMethodsOptimizationAsync();
+        }
+
+        private async Task EditOptimizationMethodAsync()
+        {
+            if (!string.IsNullOrEmpty(MethodOptimizationName) && SelectedOptimizationMethodRow != null)
+                await _methodService.EditOptimizationMethod(SelectedOptimizationMethodRow.Id, MethodOptimizationName, IsRealisedOptimizationMethod);
+            await UpdateTableMethodsOptimizationAsync();
+        }
+        #endregion
         #endregion
     }
 }
