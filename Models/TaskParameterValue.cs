@@ -10,7 +10,7 @@ namespace Models
     {
         public int ParameterId { get; set; }
         public Parameter Parameter { get; set; } = null!;
-        public int TaskId { get; set; }
+        public int DescriptionTaskId { get; set; }
         public DescriptionTask DescriptionTask { get; set; } = null!;
         public double Value { get; set; }
     }

@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace ModelsView
 {
-    public class ParameterView
+    public class TaskView
     {
-        public int? Id { get; set; }
+        public int IdTask { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
-        public string Notation { get; set; }
-        public string UnitOfMeasName { get; set; }
     }
 }

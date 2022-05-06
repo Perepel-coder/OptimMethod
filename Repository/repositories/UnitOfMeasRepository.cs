@@ -10,3 +10,11 @@ public class UnitOfMeasRepository : DataBaseRepository<UnitOfMeas, RepositoryCon
     }
 
 }
+
+public class TasksRepository : DataBaseRepository<DescriptionTask, RepositoryContext>, ITasksRepository
+{
+    public TasksRepository(RepositoryContext context) : base(context)
+    {
+    }
+
+}

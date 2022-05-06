@@ -11,7 +11,7 @@ namespace Repository.UOW
         public readonly IUnitOfMeasRepository UnitOfMeasRepository;
         public readonly IParameterTaskValueRepository ParameterTaskValueRepository;
         public readonly IMethodOptimizationRepository MethodOptimizationRepository;
-
+        public readonly ITasksRepository TasksRepository;
         public UnitOfWork(RepositoryContext context)
         {
             if (context == null)
@@ -24,6 +24,7 @@ namespace Repository.UOW
             UnitOfMeasRepository = new UnitOfMeasRepository(_repositoryContext);
             ParameterTaskValueRepository = new ParameterTaskValueRepository(_repositoryContext);
             MethodOptimizationRepository = new MathodOptimizationRepository(_repositoryContext);
+            TasksRepository = new TasksRepository(_repositoryContext);
         }
 
         private bool disposed = false;

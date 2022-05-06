@@ -14,6 +14,7 @@ namespace Repository
         {
         }
 
+        public DbSet<DescriptionTask> Tasks { get; set; } = null!;
         public DbSet<TaskParameterValue> Values { get; set; } = null!;
         public DbSet<UnitOfMeas> UnitsOfMeas { get; set; } = null!;
         public DbSet<Parameter> Parameters { get; set; } = null!;
@@ -41,12 +42,12 @@ namespace Repository
 
             // Ключи
             modelBuilder.Entity<TaskParameterValue>()
-                .HasKey(t => new { t.TaskId, t.ParameterId });
+                .HasKey(t => new { t.DescriptionTaskId, t.ParameterId });
 
             modelBuilder.Entity<TaskParameterValue>()
                 .HasOne(pt => pt.DescriptionTask)
                 .WithMany(p => p.Values)
-                .HasForeignKey(pt => pt.TaskId);
+                .HasForeignKey(pt => pt.DescriptionTaskId);
 
             modelBuilder.Entity<TaskParameterValue>()
                 .HasOne(pt => pt.Parameter)
