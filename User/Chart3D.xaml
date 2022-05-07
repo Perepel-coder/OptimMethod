@@ -1,0 +1,25 @@
+﻿<Window x:Class="User.Chart3D"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ig="http://schemas.infragistics.com/xaml"
+        xmlns:local="clr-namespace:User"
+        mc:Ignorable="d"
+        Title="Chart3D" Height="450" Width="800">
+    <Grid>
+        <ig:XamScatterSurface3D 
+                    ItemsSource="{Binding Path = Getchart3Ddata, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    XMemberPath="X" YMemberPath="Y" ZMemberPath="Z">
+            <ig:XamScatterSurface3D.XAxis>
+                <ig:LinearAxis Title="Ось X"/>
+            </ig:XamScatterSurface3D.XAxis>
+            <ig:XamScatterSurface3D.YAxis>
+                <ig:LinearAxis Title="Ось Y"/>
+            </ig:XamScatterSurface3D.YAxis>
+            <ig:XamScatterSurface3D.ZAxis>
+                <ig:LinearAxis Title="Ось Z"/>
+            </ig:XamScatterSurface3D.ZAxis>
+        </ig:XamScatterSurface3D>
+    </Grid>
+</Window>

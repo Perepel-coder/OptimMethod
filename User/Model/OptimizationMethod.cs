@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace User.Model
 {
     public enum Quality { BEST, WORST, NEUTRAL}
-    public class Point
+    public  delegate double task(Point2 point);
+    public class Point2
     {
         public double X { get; set; }
         public double Y { get; set; }
@@ -15,14 +18,37 @@ namespace User.Model
         public bool Complex { get; set; } = false;
         public Quality Quality { get; set; } = Quality.NEUTRAL;
     }
+    public class Point3
+    {
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Z { get; set; }
+    }
+
+    internal static class Task
+    {
+        public static double GetTask15(Point2 point)      // вычисление значений целевой функции (вариант 15)
+        {
+            double a = 1, β = 1, y = 3.14, p1 = 1, p2 = 1, N = 2;
+            double sqrt = Math.Sqrt(Math.Pow(point.X, N) + Math.Pow(point.Y, N));
+            double FunctionValue = a * (point.X - β * p1) * Math.Cos(y * p2 * sqrt);
+            return FunctionValue;
+        }
+        public static double GetTask18(Point2 point)      // вычисление значений целевой функции (вариант 18)
+        {
+            double a = 1, β = 1, μ = 1, A = 1, G = 2, N = 2;
+            double FunctionValue = a * (G * μ * (Math.Pow(point.Y - point.X, N) + Math.Pow(β * A - point.X, N)));
+            return FunctionValue;
+        }
+    }
+
     // для функции 2-х переменных
     internal class ComplexBoxingMethod
     {
-
         private int N;  // число точек комплекса
-        private Point pointFbest;   // лучшее значение функции
-        private Point pointFworst;  // худшее значенеи функции
-        private Point centr;    // центр комплекса
+        private Point2 pointFbest;   // лучшее значение функции
+        private Point2 pointFworst;  // худшее значенеи функции
+        private Point2 centr;    // центр комплекса
         private double xmin;    // нижнее ограничение по х
         private double xmax;    // верхнее ограничение по x
         private double ymin;    // нижнее ограничение по y
@@ -30,25 +56,27 @@ namespace User.Model
         private double k;       // k: y=kx+b
         private double b;       // b: y=kx+b
         private string sing;    // знак ограничения второго рода
-
-        //-----------------временно-------------------------
-        private double ε = 0.01;
+        private double ε;       // точность
+        private bool max;
         //------------------------------------------
+
         #region конструктор
-        public ComplexBoxingMethod( int n, double k, double b, string sing,
-            double xmin, double xmax, double ymin, double ymax)
+        public ComplexBoxingMethod(bool max, double k, double b, string sing,
+            double xmin, double xmax, double ymin, double ymax, double ε) 
         {
-            this.N = 2 * n;
+            this.pointFbest = new();
+            this.pointFworst = new();
+            this.centr = new();
+            this.N = 200;
             this.xmin = xmin;
             this.xmax = xmax;
             this.ymin = ymin;
             this.ymax = ymax;
+            this.max = max;
             this.k = k;
             this.b = b;
             this.sing = sing;
-            pointFbest = new();
-            pointFworst = new();
-            centr = new();
+            this.ε = ε;
         }
         #endregion
 
@@ -64,79 +92,143 @@ namespace User.Model
             }
             return flag;
         }
-        private List<Point> GetComplex()     // 1) Формирование исходного Комплекса
+        private List<Point2> GetComplex()     // 1) Формирование исходного Комплекса
         {
             Random rnd = new();
-            List<Point> points = new();
+            List<Point2> points = new();
             int numberCorrectPoints = 0;
             double sumCorrectX = 0;
             double sumCorrectY = 0;
-            for (int i = 0; i < N; i++)
+            bool flag = false;
+            while (!flag)
             {
-                double x = Math.Round(this.xmin + rnd.NextDouble() * (this.xmax - this.xmin), 2);
-                double y = Math.Round(this.ymin + rnd.NextDouble() * (this.ymax - this.ymin), 2);
-                bool flag = CheckConditionSecondKind(x, y, this.sing);
+                double x = this.xmin + (rnd.Next(1, 999) / 1000.0f) * (this.xmax - this.xmin);
+                double y = this.ymin + (rnd.Next(1, 999) / 1000.0f) * (this.ymax - this.ymin);
+                flag = CheckConditionSecondKind(x, y, this.sing);
+                if (flag)
+                {
+                    numberCorrectPoints++;
+                    sumCorrectX += x;
+                    sumCorrectY += y;
+                    points.Add(new Point2 { X = x, Y = y, Complex = flag });
+                } 
+            }
+            for (int i = 1; i < this.N; i++)
+            {
+                double x = this.xmin + (rnd.Next(1, 999) / 1000.0f) * (this.xmax - this.xmin);
+                double y = this.ymin + (rnd.Next(1, 999) / 1000.0f) * (this.ymax - this.ymin);
+                flag = CheckConditionSecondKind(x, y, this.sing);
                 if (flag)
                 {
                     numberCorrectPoints++;
                     sumCorrectX += x;
                     sumCorrectY += y;
                 }
-                points.Add(new Point { X = x, Y = y, Complex = flag });  
+                points.Add(new Point2 { X = x, Y = y, Complex = flag });  
             }
             for (int i = 0; i < points.Count; i++)
             {
+                flag = false;
                 while (!points[i].Complex)
                 {
-                    points[i].X = Math.Round((sumCorrectX / numberCorrectPoints + points[i].X) / 2, 2);
-                    points[i].Y = Math.Round((sumCorrectY / numberCorrectPoints + points[i].Y) / 2, 2);
+                    flag = true;
                     points[i].Complex = CheckConditionSecondKind(points[i].X, points[i].Y, this.sing);
+                    if (points[i].Complex) { break; }
+                    points[i].X = (sumCorrectX / numberCorrectPoints + points[i].X) / 2.0f;
+                    points[i].Y = (sumCorrectY / numberCorrectPoints + points[i].Y) / 2.0f;
                 }
-                numberCorrectPoints++;
-                sumCorrectX += points[i].X;
-                sumCorrectY += points[i].Y;
+                if (flag)
+                {
+                    numberCorrectPoints++;
+                    sumCorrectX += points[i].X;
+                    sumCorrectY += points[i].Y;
+                }
             }
             return points;
         }
-        private void GetValuesFunction(List<Point> points)    // 2) Вычисление значений целевой функции.
+        private void GetValuesFunction(List<Point2> points)    // 2) Вычисление значений целевой функции.
         {
             for (int i = 0; i < points.Count; i++)
             {
-                points[i].FunctionValue = GetTask15(points[i]);
+                points[i].FunctionValue = Task.GetTask15(points[i]);
             }
         }
-        private void GetBestAndWorstValue(List<Point> points, bool max)    // 3) Выбор наилучшего и наихудшего значения
+        private void GetBestAndWorstValue(List<Point2> points)    // 3) Выбор наилучшего и наихудшего значения
         {
+            double maxV = Double.MinValue; int maxVid = 0;
+            double minV = Double.MaxValue; int minVid = 0;
+            foreach (var point in points) { point.Quality = Quality.NEUTRAL; }
             for (int i = 0; i < points.Count; i++)
             {
-                if (i == 0) { continue; }
-                if (points[i].FunctionValue <= points[i - 1].FunctionValue)
-                {
-                    points[i - 1].Quality = Quality.NEUTRAL;
-                    if (max) { points[i].Quality = Quality.WORST; }
-                    else { points[i].Quality = Quality.BEST; }  
-                }
-                if (points[i].FunctionValue >= points[i - 1].FunctionValue)
-                {
-                    points[i - 1].Quality = Quality.NEUTRAL;
-                    points[i].Quality = Quality.BEST;
-                    if (max) { points[i].Quality = Quality.BEST; }
-                    else { points[i].Quality = Quality.WORST; }
-                }
+                if (points[i].FunctionValue >= maxV) { maxV = points[i].FunctionValue; maxVid = i; }
+                if (points[i].FunctionValue <= minV) { minV = points[i].FunctionValue; minVid = i; }
             }
-            this.pointFbest = points.Where(x => x.Quality == Quality.BEST).Select(el => el).Single();
-            this.pointFworst = points.Where(x => x.Quality == Quality.WORST).Select(el => el).Single();
+            if (max)
+            {
+                if (maxVid == minVid) 
+                {
+                    maxVid = 0;
+                    minVid = 1;
+                }
+                points[maxVid].Quality = Quality.BEST;
+                points[minVid].Quality = Quality.WORST;
+
+                this.pointFbest = new Point2
+                {
+                    X = points[maxVid].X,
+                    Y = points[maxVid].Y,
+                    Complex = points[maxVid].Complex,
+                    FunctionValue = points[maxVid].FunctionValue,
+                    Quality = points[maxVid].Quality
+                };
+                this.pointFworst = new Point2
+                {
+                    X = points[minVid].X,
+                    Y = points[minVid].Y,
+                    Complex = points[minVid].Complex,
+                    FunctionValue = points[minVid].FunctionValue,
+                    Quality = points[minVid].Quality
+                };
+            }
+            else
+            {
+                if (maxVid == minVid)
+                {
+                    maxVid = 0;
+                    minVid = 1;
+                }
+                points[maxVid].Quality = Quality.WORST;
+                points[minVid].Quality = Quality.BEST;
+
+                this.pointFworst = new Point2
+                {
+                    X = points[maxVid].X,
+                    Y = points[maxVid].Y,
+                    Complex = points[maxVid].Complex,
+                    FunctionValue = points[maxVid].FunctionValue,
+                    Quality = points[maxVid].Quality
+                };
+                this.pointFbest = new Point2
+                {
+                    X = points[minVid].X,
+                    Y = points[minVid].Y,
+                    Complex = points[minVid].Complex,
+                    FunctionValue = points[minVid].FunctionValue,
+                    Quality = points[minVid].Quality
+                };
+            }
         }
-        private bool GetCoordCenter(List<Point> points, double ε)    // 4) Определение координат Сi центра Комплекса. 5) Проверка условия окончания поиска
+        private bool GetCoordCenter(List<Point2> points, double ε)    // 4) Определение координат Сi центра Комплекса. 5) Проверка условия окончания поиска
         {
-            this.centr.X = Math.Pow(N - 1, -1) * (points.Sum(el => el.X) - pointFworst.X);
-            this.centr.Y = Math.Pow(N - 1, -1) * (points.Sum(el => el.Y) - pointFworst.Y);
-            double sum = (Math.Abs(centr.X - pointFworst.X) + Math.Abs(centr.X - pointFbest.X)) +
-                (Math.Abs(centr.Y - pointFworst.Y) + Math.Abs(centr.Y - pointFbest.Y));
-            double B = Math.Pow(2 * N, -1) * sum;
-            return B < ε ? true : false;
+            this.centr.X = (points.Where(x => x.Quality != Quality.WORST).Sum(el => el.X)) / (N - 1);
+            this.centr.Y = (points.Where(x => x.Quality != Quality.WORST).Sum(el => el.Y)) / (N - 1);
+
+            double cross1 = Math.Sqrt(Math.Pow(centr.X - pointFworst.X, 2) + Math.Pow(centr.Y - pointFworst.Y, 2));
+            double cross2 = Math.Sqrt(Math.Pow(centr.X - pointFbest.X, 2) + Math.Pow(centr.Y - pointFbest.Y, 2));
+            double B = cross1 + cross2;
+            return (B < ε) ? true : false;
         }
-        private void GetPointInsteadWorstPoint(List<Point> points, double ε) // 6) - 10) 
+        private void GetPointInsteadWorstPoint(bool max, List<Point2> points, double ε) // 6) - 10) 
         {
             for (int i = 0; i < points.Count; i++)
             {
@@ -144,62 +236,105 @@ namespace User.Model
                 {
                     // 6) Вычисление координаты новой точки Комплекса взамен наихудшей
                     points[i].Complex = false;
-                    points[i].X = 2.3 * this.centr.X - 1.3 * this.pointFbest.X;
-                    points[i].Y = 2.3 * this.centr.Y - 1.3 * this.pointFbest.Y;
+                    points[i].X = 2.3f * this.centr.X - 1.3f * this.pointFworst.X;
+                    points[i].Y = 2.3f * this.centr.Y - 1.3f * this.pointFworst.Y;
 
-                    if (points[i].X <= xmin) { points[i].X = xmin + ε; }
-                    if (points[i].X >= xmax) { points[i].X = xmax - ε; }
-                    if (points[i].Y <= ymin) { points[i].X = ymin + ε; }
-                    if (points[i].Y >= ymax) { points[i].X = ymax - ε; }
+                    if (points[i].X < xmin) { points[i].X = xmin + ε; }
+                    if (points[i].X > xmax) { points[i].X = xmax - ε; }
+                    if (points[i].Y < ymin) { points[i].Y = ymin + ε; }
+                    if (points[i].Y > ymax) { points[i].Y = ymax - ε; }
 
                     // 7) Проверка выполнения ограничений 2.го рода для новой точки.
-                    while (!points[i].Complex)
+                    while (true)
                     {
                         points[i].Complex = CheckConditionSecondKind(points[i].X, points[i].Y, sing);
-                        points[i].X = (1 / 2) * (points[i].X + centr.X);
-                        points[i].Y = (1 / 2) * (points[i].Y + centr.Y);
+                        if (points[i].Complex) { break; }
+                        points[i].X = (points[i].X + centr.X) / 2.0f;
+                        points[i].Y = (points[i].Y + centr.Y) / 2.0f;
                     }
                     // 8) Вычисление значения целевой функции F0 в новой точке
-                    points[i].FunctionValue = GetTask15(points[i]);
+                    points[i].FunctionValue = Task.GetTask15(points[i]);
 
                     // 9) Нахождение новой вершины смещением xi0   на половину расстояния к лучшей из вершин комплекса
                     // 10) Замена наихудшей точки
-                    while (points[i].FunctionValue < pointFworst.FunctionValue)
+                    if (max)
                     {
-                        points[i].X = (1 / 2) * (points[i].X + pointFbest.X);
-                        points[i].Y = (1 / 2) * (points[i].Y + pointFbest.Y);
-                        points[i].FunctionValue = GetTask15(points[i]);
+                        while (points[i].FunctionValue <= pointFworst.FunctionValue)
+                        {
+                            points[i].X = (points[i].X + pointFbest.X) / 2.0f;
+                            points[i].Y = (points[i].Y + pointFbest.Y) / 2.0f;
+                            points[i].FunctionValue = Task.GetTask15(points[i]);
+                        }
+                    }
+                    else
+                    {
+                        while (points[i].FunctionValue >= pointFworst.FunctionValue)
+                        {
+                            points[i].X = (points[i].X + pointFbest.X) / 2.0f;
+                            points[i].Y = (points[i].Y + pointFbest.Y) / 2.0f;
+                            points[i].FunctionValue = Task.GetTask15(points[i]);
+                        }
                     }
                     break;
                 }
             }
         }
-        private double GetTask15(Point point)      // вычисление значений целевой функции (вариант 15)
+       
+        public Point2 Solve()
         {
-            double a = 1, β = 1, y = 3.14, p1 = 1, p2 = 1, N = 2;
-            double sqrt = Math.Sqrt(Math.Pow(point.X, N) + Math.Pow(point.Y, N));
-            double FunctionValue = a * (point.X - β * p1) * Math.Cos(y * p2 * sqrt);
-            return FunctionValue;
-        }
-        private double GetTask18(Point point)      // вычисление значений целевой функции (вариант 18)
-        {
-            double a = 1, β = 1, μ = 1, A = 1, G = 2, N = 2;
-            double FunctionValue = a * (G * μ * (Math.Pow(point.Y - point.X, N) + Math.Pow(β * A - point.X, N)));
-            return FunctionValue;
+            List<Point2> points = GetComplex();
+            bool end;
+            GetValuesFunction(points);
+            do
+            {
+                GetBestAndWorstValue(points);
+                if (pointFbest == pointFworst) { return points.Where(x => x.Quality == Quality.BEST).Select(el => el).Single(); }
+                end = GetCoordCenter(points, this.ε);
+                if (end) { return points.Where(x=>x.Quality == Quality.BEST).Select(el=>el).Single(); }
+                GetPointInsteadWorstPoint(true, points, this.ε);
+            }
+            while (true);
         }
 
-        public void Solve(bool max)
+        public ObservableCollection<Point3> GetChartData(task Task)
         {
-            List<Point> points = GetComplex();
-            GetValuesFunction(points);
-            GetBestAndWorstValue(points, max);
-            bool end = GetCoordCenter(points, this.ε);
-            while (!end)
+            float step = 0.1f;
+            ObservableCollection<Point3> chart3dData = new();
+            for (float i = ((float)xmin); i < xmax; i += step) 
             {
-                GetPointInsteadWorstPoint(points, ε);
-                GetBestAndWorstValue(points, max);
-                end = GetCoordCenter(points, this.ε);
+                for (float j = ((float)ymin); j < ymax; j += step)
+                {
+                    chart3dData.Add(new Point3 { X = i, Y = j, Z = (float)Task(new Point2 { X = i, Y = j}) });
+                }
             }
+            return chart3dData;
+        }
+        public ObservableCollection<Point2> GetChartLimitationData()
+        {
+            ObservableCollection<Point2> limitationData = new();
+            ObservableCollection<Point2> points = new();
+            double yXmin = k * xmin + b;
+            double yXmax = k * xmax + b;
+            double xYmin = (ymin - b) / k;
+            double xYmax = (ymax - b) / k;
+
+            if (ymin <= yXmax && yXmax <= ymax)
+            {
+                limitationData.Add(new Point2 { X = xmax, Y = yXmax});
+            }
+            if (xmin <= xYmax && xYmax <= xmax)
+            {
+                limitationData.Add(new Point2 { X = xYmax, Y = ymax});
+            }
+            if (ymin <= yXmin && yXmin <= ymax) 
+            {
+                limitationData.Add(new Point2 { X = xmin, Y = yXmin });
+            }
+            if (xmin <= xYmin && xYmin <= xmax)
+            {
+                limitationData.Add(new Point2 { X = xYmin, Y = ymin });
+            }
+            return limitationData;
         }
     }
 }

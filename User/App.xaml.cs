@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Autofac;
 using System.Windows;
+using User.Model;
+using User.ViewModel;
 
 namespace User
 {
@@ -13,5 +10,12 @@ namespace User
     /// </summary>
     public partial class App : Application
     {
+        private void _Startup(object sender, StartupEventArgs e)
+        {
+            var container = Container.GetBuilder().Build();
+            var view = new MainWindow { DataContext = container.Resolve<UserViewModel>() };
+            view.Show();
+        }
     }
+   
 }

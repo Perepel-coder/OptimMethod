@@ -8,7 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="vm\" />
+    <PackageReference Include="Autofac" Version="6.3.0" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.3.0" />
+    <PackageReference Include="Infragistics.WPF.Charts.Trial" Version="21.2.39" />
+    <PackageReference Include="Infragistics.WPF.SurfaceChart3D.Trial" Version="21.2.39" />
+    <PackageReference Include="ReactiveUI" Version="18.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ServicesMVVM\ServicesMVVM.csproj" />
   </ItemGroup>
 
 </Project>
