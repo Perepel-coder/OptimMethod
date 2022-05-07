@@ -28,7 +28,8 @@ namespace Services
             var param = uow.ParameterRepository.GetEntityQuery().Select(x => new ParameterView()
             {
                 Id = x.Id,
-                Name = x.Description,
+                Description = x.Description,
+                Notation = x.Notation,
                 UnitOfMeasName = x.UnitOfMeas.Name
             });
             parameters = await param.ToListAsync();
@@ -43,7 +44,8 @@ namespace Services
             var param = uow.ParameterRepository.GetEntityQuery().Select(x => new ParameterView()
             {
                 Id = x.Id,
-                Name = x.Description,
+                Description = x.Description,
+                Notation = x.Notation,
                 UnitOfMeasName = x.UnitOfMeas.Name
             });
             parameters = param.ToList();
@@ -60,7 +62,7 @@ namespace Services
             {
                 await uow.ParameterRepository.AddAsync( new Parameter()
                 {
-                    Description = parameter.Name,
+                    Description = parameter.Description,
                     UnitOfMeas = new UnitOfMeas()
                     {
                         Name = parameter.UnitOfMeasName
@@ -71,7 +73,8 @@ namespace Services
             {
                 await uow.ParameterRepository.AddAsync(new Parameter()
                 {
-                    Description = parameter.Name,
+                    Description = parameter.Description,
+                    Notation = parameter.Notation,
                     UnitOfMeasId = unitOfMeas.Id
                 });
             }
@@ -97,7 +100,8 @@ namespace Services
             await uow.ParameterRepository.UpdateAsync(new Parameter()
             {
                 Id = parameter.Id ?? throw new Exception("Ошибка при изменении параметра: пустой id "),
-                Description = parameter.Name,
+                Description = parameter.Description,
+                Notation = parameter.Notation,
                 UnitOfMeasId = unitOfMeas.Id
             });
         }

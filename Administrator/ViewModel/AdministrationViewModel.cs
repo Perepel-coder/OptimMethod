@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using ModelsView;
 using ProgramSystem.Bll.Services.Interfaces;
 using ReactiveUI;
@@ -59,7 +60,7 @@ namespace Administrator.ViewModel
             AddUnitOfMeasCommand = new AsyncCommand(AddUnitOfMeasAsync, CanAddUnitOfMeas);
             DeleteUnitOfMeasCommand = new AsyncCommand(RemoveUnitOfMeasAsync, CanDeleteUnitOfMeas);
 
-            // методы оптимизации
+            // Методы оптимизации
             OptimizationMethodsTable = new ObservableCollection<OptimizationMethodView>(_methodService.GetAllOptimizationMethods());
             UpdateTableOptimizationMethodCommand = new AsyncCommand(UpdateTableMethodsOptimizationAsync, () => true);
             ClearPropertiesMehodsOptimizationCommand =
@@ -68,6 +69,22 @@ namespace Administrator.ViewModel
             DeleteOptimizationMethodCommand = new AsyncCommand(DeleteOptimizationMethodAsync, CanDeleteOptimizationMethod);
             EditOptimizationMethodAsyncCommand =
                 new AsyncCommand(EditOptimizationMethodAsync, CanEditOptimizationMethod);
+
+            // Задачи
+            TasksTable = new ObservableCollection<TaskView>(_tasksService.GetAllTask());
+            ParametersForTaskComboBox = new ObservableCollection<ParameterView>(_parameterService.GetAllParameters());
+            ParametersByTaskTable = new ObservableCollection<TaskParameterValueView>(_tasksService.GetAllParametersValues());
+            TasksComboBox = new ObservableCollection<TaskView>(_tasksService.GetAllTask());
+            TasksForViewParametersComboBox = new ObservableCollection<TaskView>(_tasksService.GetAllTask());
+            UpdateTasksTableCommand = new AsyncCommand(UpdateTaskTableAsync, () => true);
+            UpdateParametersForTaskTableCommand = new AsyncCommand(UpdateParameteresForTaskTableAsync, () => true);
+            ClearTaskPropertiesCommand = new RelayCommand(obj => ClearTaskProperties());
+            AddTaskCommand = new AsyncCommand(AddTaskAsync, CanAddTask);
+            DeleteTaskCommand = new AsyncCommand(DeleteTaskAsync, CanDeleteTask);
+            EditTaskCommand = new AsyncCommand(EditTaskAsync, CanEditTask);
+            AddParameterForTaskCommand = new AsyncCommand(AddParameterByTaskAsync, CanAddParameterForTask);
+            DeleteParameterForTaskCommand = new AsyncCommand(DeleteParameterByTaskAsync,CanDeleteParameterForTask);
+            EditParameterForTaskCommand = new AsyncCommand(EditParameterByTaskAsync, CanEditParameterForTask);
         }
 
         #region Fields
@@ -86,6 +103,7 @@ namespace Administrator.ViewModel
         private ObservableCollection<ParameterView>? _parametersTable;
         private ObservableCollection<string>? _unitsOfMeasComboBox;
         private string? _selectedUnitOfMeas;
+        private string? _notation;
 
         // единицы измерения
         private string? _unitOfMeasName;
@@ -97,11 +115,138 @@ namespace Administrator.ViewModel
         private OptimizationMethodView ? _selectedOptimizationMethodRow;
         private ObservableCollection<OptimizationMethodView> ? _optimizationMethodsTable;
         private bool _isRealisedOptimizationMethod;
+
+        // Задачи
+        private string? _taskName;
+        private string? _taskDescription;
+        private TaskView? _selectedTaskRow;
+        private ObservableCollection<TaskView>? _tasksTable;
+
+        private ParameterView?  _selectedParameterForTaskComboBox;
+        private ObservableCollection<ParameterView>? _parametersForTaskComboBox;
+        public TaskView? _selectedTaskComboBox;
+        public ObservableCollection<TaskView>? _tasksComboBox;
+        private double? _parameterByTaskValue;
+        private ObservableCollection<TaskParameterValueView>? _parametersByTaskTable;
+        private TaskParameterValueView? _selectedParameterByTaskRow;
+        private TaskView? _selectedTaskForViewParameters;
+        private ObservableCollection<TaskView>? _tasksForViewParametersComboBox;
         #endregion
 
 
         #region Properties
 
+        #region Задачи
+
+        public string? TaskName
+        {
+            get => _taskName;
+            set => this.RaiseAndSetIfChanged(ref _taskName, value);
+        }
+        public string? TaskDescroption
+        {
+            get => _taskDescription;
+            set => this.RaiseAndSetIfChanged(ref _taskDescription, value);
+        }
+        public TaskView? SelectedTaskRow
+        {
+            get => _selectedTaskRow;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedTaskRow, value);
+                if (_selectedTaskRow != null)
+                {
+                    TaskName = _selectedTaskRow.Name;
+                    TaskDescroption = _selectedTaskRow.Description;
+                }
+                else
+                {
+                    ParametersByTaskTable = new ObservableCollection<TaskParameterValueView>(_tasksService.GetAllParametersValues());
+                }
+            }
+        }
+        public ObservableCollection<TaskView>? TasksTable
+        {
+            get => _tasksTable;
+            set => this.RaiseAndSetIfChanged(ref _tasksTable, value);
+        }
+
+        public ParameterView?  SelectedParameterForTaskComboBox
+        {
+            get => _selectedParameterForTaskComboBox;
+            set => this.RaiseAndSetIfChanged(ref _selectedParameterForTaskComboBox, value);
+        }
+        public ObservableCollection<ParameterView>? ParametersForTaskComboBox
+        {
+            get => _parametersForTaskComboBox;
+            set => this.RaiseAndSetIfChanged(ref _parametersForTaskComboBox, value);
+        }
+
+        public TaskView? SelectedTaskComboBox
+        {
+            get => _selectedTaskComboBox;
+            set => this.RaiseAndSetIfChanged(ref _selectedTaskComboBox, value);
+        }
+        public ObservableCollection<TaskView>? TasksComboBox
+        {
+            get => _tasksComboBox;
+            set => this.RaiseAndSetIfChanged(ref _tasksComboBox, value);
+        }
+        public double? ParameterByTaskValue
+        {
+            get => _parameterByTaskValue;
+            set => this.RaiseAndSetIfChanged(ref _parameterByTaskValue, value);
+        }
+        public TaskParameterValueView? SelectedParameterByTaskRow
+        {
+            get => _selectedParameterByTaskRow;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedParameterByTaskRow, value);
+                if (_selectedParameterByTaskRow != null)
+                {
+                    if (ParametersForTaskComboBox != null)
+                        SelectedParameterForTaskComboBox = ParametersForTaskComboBox
+                            .FirstOrDefault(x => x.Id == _selectedParameterByTaskRow.ParameterId);
+                    if (TasksComboBox != null)
+                        SelectedTaskComboBox = TasksComboBox
+                            .FirstOrDefault(x => x.IdTask == _selectedParameterByTaskRow.TaskId);
+                    ParameterByTaskValue = _selectedParameterByTaskRow.Value;
+                }
+            }
+        }
+        public ObservableCollection<TaskParameterValueView>? ParametersByTaskTable
+        {
+            get => _parametersByTaskTable;
+            set => this.RaiseAndSetIfChanged(ref _parametersByTaskTable, value);
+        }
+        public TaskView? SelectedTaskForViewParameters
+        {
+            get => _selectedTaskForViewParameters;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _selectedTaskForViewParameters, value);
+                if (_selectedTaskForViewParameters != null)
+                {
+                    if (TasksComboBox != null)
+                        SelectedTaskComboBox = TasksComboBox
+                            .FirstOrDefault(x => x.IdTask == _selectedTaskForViewParameters.IdTask);
+                    ParametersByTaskTable =
+                        new ObservableCollection<TaskParameterValueView>(_tasksService.GetParametersByTaskId(_selectedTaskForViewParameters.IdTask));
+                }
+                else
+                {
+                    ParametersByTaskTable =
+                        new ObservableCollection<TaskParameterValueView>(_tasksService.GetAllParametersValues());
+                }
+            }
+        }
+        public ObservableCollection<TaskView>? TasksForViewParametersComboBox
+        {
+            get => _tasksForViewParametersComboBox;
+            set => this.RaiseAndSetIfChanged(ref _tasksForViewParametersComboBox, value);
+        }
+        #endregion
         #region пользователи
 
         public string? Login
@@ -157,6 +302,12 @@ namespace Administrator.ViewModel
             get => _parameterName;
             set => this.RaiseAndSetIfChanged(ref _parameterName, value);
         }
+
+        public string? Notation
+        {
+            get => _notation;
+            set => this.RaiseAndSetIfChanged(ref _notation, value);
+        }
         public ParameterView? SelectedParameterRow
         {
             get => _selectedParameterRow;
@@ -165,11 +316,13 @@ namespace Administrator.ViewModel
                 this.RaiseAndSetIfChanged(ref _selectedParameterRow, value);
                 if (_selectedParameterRow != null)
                 {
-                    ParameterName = _selectedParameterRow.Name;
+                    ParameterName = _selectedParameterRow.Description;
                     SelectedUnitOfMeas = _selectedParameterRow.UnitOfMeasName;
+                    Notation = _selectedParameterRow.Notation;
                 }
                 else
                 {
+                    Notation = null;
                     ParameterName = null;
                     SelectedUnitOfMeas = null;
                 }
@@ -260,6 +413,21 @@ namespace Administrator.ViewModel
 
         #region Command
 
+        #region Команды_задачи
+
+        public AsyncCommand UpdateTasksTableCommand { get; set; }
+        public AsyncCommand UpdateParametersForTaskTableCommand { get; set; }
+        public RelayCommand ClearTaskPropertiesCommand { get; set; }
+
+        public AsyncCommand AddTaskCommand { get; set; }
+        public AsyncCommand DeleteTaskCommand { get; set; }
+        public AsyncCommand EditTaskCommand { get; set; }
+
+        public AsyncCommand AddParameterForTaskCommand { get; set; }
+        public AsyncCommand DeleteParameterForTaskCommand { get; set; }
+        public AsyncCommand EditParameterForTaskCommand { get; set; }
+
+        #endregion
         #region Команды_Пользователей
         public RelayCommand UpdateUsersListCommand { get; set; }
         public RelayCommand ClearUserPropertiesCommand { get; set; }
@@ -283,7 +451,6 @@ namespace Administrator.ViewModel
         public AsyncCommand DeleteUnitOfMeasCommand { get; set; }
         public AsyncCommand UpdateUnitOfMeasTableCommand { get; set; }
         #endregion
-
         #region Команды_Методы_оптимизации
         public AsyncCommand UpdateTableOptimizationMethodCommand { get; set; }
         public RelayCommand ClearPropertiesMehodsOptimizationCommand { get; set; }
@@ -297,6 +464,25 @@ namespace Administrator.ViewModel
 
         #region CanMethod
 
+        #region Can_задачи
+
+        private bool CanAddTask() => !string.IsNullOrEmpty(TaskName) 
+                                     && !string.IsNullOrEmpty(TaskDescroption);
+        private bool CanDeleteTask() => SelectedTaskRow != null;
+        private bool CanEditTask() => SelectedTaskRow != null 
+                                      && !string.IsNullOrEmpty(TaskName)
+                                      && !string.IsNullOrEmpty(TaskDescroption);
+
+        private bool CanAddParameterForTask() => SelectedTaskComboBox != null 
+                                                 && ParameterByTaskValue != null
+                                                 && SelectedParameterForTaskComboBox != null;
+        private bool CanDeleteParameterForTask() => SelectedParameterByTaskRow != null;
+        private bool CanEditParameterForTask() => SelectedTaskComboBox != null 
+                                                  && SelectedParameterByTaskRow != null
+                                                  && ParameterByTaskValue != null
+                                                  && SelectedParameterForTaskComboBox != null;
+
+        #endregion
         #region Can_пользователи
         // Пользователь
         private bool CanAddUser() => !string.IsNullOrEmpty(Login)
@@ -311,11 +497,13 @@ namespace Administrator.ViewModel
         #region Can_Параметры
         // Параметры
         private bool CanAddParameter() => !string.IsNullOrEmpty(ParameterName)
-                                          && !string.IsNullOrEmpty(SelectedUnitOfMeas);
+                                          && !string.IsNullOrEmpty(SelectedUnitOfMeas)
+                                          && !string.IsNullOrEmpty(Notation);
         private bool CanDeleteParameter() => SelectedParameterRow != null;
         private bool CanEditParameter() => !string.IsNullOrEmpty(ParameterName)
                                            && !string.IsNullOrEmpty(SelectedUnitOfMeas)
-                                           && SelectedParameterRow != null;
+                                           && SelectedParameterRow != null
+                                           && !string.IsNullOrEmpty(Notation);
 
         #endregion
         #region Can_ЕдИзмерения
@@ -338,6 +526,96 @@ namespace Administrator.ViewModel
 
         #region Methods
 
+        #region Методы_задачи
+
+        private async Task UpdateTaskTableAsync()
+        {
+            TasksTable = new ObservableCollection<TaskView>(await _tasksService.GetAllTaskAsync());
+            TasksComboBox = new ObservableCollection<TaskView>(await _tasksService.GetAllTaskAsync());
+            TasksForViewParametersComboBox = new ObservableCollection<TaskView>(await _tasksService.GetAllTaskAsync());
+        }
+        private async Task UpdateParameteresForTaskTableAsync()
+        {
+            if (SelectedTaskForViewParameters != null)
+            {
+                ParametersByTaskTable = new ObservableCollection<TaskParameterValueView>(await _tasksService.GetParametersByTaskIdAsync(SelectedTaskForViewParameters.IdTask));
+            }
+            else
+            {
+                ParametersByTaskTable = new ObservableCollection<TaskParameterValueView>(await _tasksService.GetAllParametersAsync());
+            }
+            ParametersForTaskComboBox = new ObservableCollection<ParameterView>(await _parameterService.GetAllParametersAsync());
+        }
+
+        private void ClearTaskProperties()
+        {
+            TaskName = null;
+            TaskDescroption = null;
+            SelectedTaskRow = null;
+            SelectedParameterForTaskComboBox = null;
+            ParameterByTaskValue = null;
+            SelectedParameterByTaskRow = null;
+            SelectedTaskComboBox = null;
+            SelectedTaskForViewParameters = null;
+        }
+        private async Task AddTaskAsync()
+        {
+            if(string.IsNullOrEmpty(TaskName) && string.IsNullOrEmpty(TaskDescroption))
+                return;
+            try
+            {
+                await _tasksService.AddTaskAsync(TaskName, TaskDescroption);
+            }
+            catch
+            {
+                MessageBox.Show("Такая задача уже есть");
+            }
+            TasksTable = new ObservableCollection<TaskView>(await _tasksService.GetAllTaskAsync());
+        }
+        private async Task DeleteTaskAsync()
+        {
+            if(SelectedTaskRow == null)
+                return;
+            await _tasksService.DeleteTaskAsync(SelectedTaskRow.IdTask);
+        }
+        private async Task EditTaskAsync()
+        {
+            if (!CanEditTask()) return;
+            await _tasksService.EditTaskAsync(SelectedTaskRow.IdTask, TaskName, TaskDescroption);
+        }
+        private async Task AddParameterByTaskAsync()
+        {
+            if(!CanAddParameterForTask()) return;
+            if (SelectedParameterForTaskComboBox != null && SelectedTaskComboBox != null)
+            {
+                try
+                {
+                    await _tasksService.AddParameterTaskAsync(SelectedParameterForTaskComboBox.Id ?? 0,
+                        SelectedTaskComboBox.IdTask, ParameterByTaskValue ?? 0);
+                }
+                catch
+                {
+                    MessageBox.Show("Такой параметр уже добавлен");
+                }
+            }
+        }
+        private async Task DeleteParameterByTaskAsync()
+        {
+            if(!CanDeleteParameterForTask())
+                return;
+            if (SelectedParameterByTaskRow != null)
+                await _tasksService.DeleteParameterTaskAsync(SelectedParameterByTaskRow.ParameterId,
+                    SelectedParameterByTaskRow.TaskId);
+        }
+        private async Task EditParameterByTaskAsync()
+        {
+            if (!CanEditParameterForTask())
+                return;
+            if (SelectedParameterByTaskRow != null)
+                await _tasksService.EditParameterTaskAsync(SelectedParameterByTaskRow.ParameterId,
+                    SelectedParameterByTaskRow.TaskId, ParameterByTaskValue ?? 0);
+        }
+        #endregion
         #region Методы_пользователей
         private void UpdateUsersTable()
         {
@@ -417,13 +695,14 @@ namespace Administrator.ViewModel
         }
         private async Task AddParameterAsync()
         {
-            if (string.IsNullOrEmpty(ParameterName) || string.IsNullOrEmpty(SelectedUnitOfMeas))
+            if (string.IsNullOrEmpty(ParameterName) || string.IsNullOrEmpty(SelectedUnitOfMeas) || string.IsNullOrEmpty(Notation))
                 return;
 
             await _parameterService.AddParameterAsync(new ParameterView()
             {
-                Name = ParameterName,
-                UnitOfMeasName = SelectedUnitOfMeas
+                Description = ParameterName,
+                UnitOfMeasName = SelectedUnitOfMeas,
+                Notation = Notation
             });
 
             await UpdateParametersTableAsync();
@@ -446,16 +725,19 @@ namespace Administrator.ViewModel
                 return;
 
             ParameterView parameterView = SelectedParameterRow;
-            parameterView.Name = ParameterName;
+            parameterView.Description = ParameterName;
             parameterView.UnitOfMeasName = SelectedUnitOfMeas;
+            parameterView.Notation = Notation;
 
             await _parameterService.EditParameterAsync(parameterView);
+            await UpdateParametersTableAsync();
         }
         private void ClearParameterProperties()
         {
             SelectedParameterRow = null;
             ParameterName = null;
             SelectedUnitOfMeas = null;
+            Notation = null;
         }
 
 
@@ -480,6 +762,7 @@ namespace Administrator.ViewModel
             if(SelectedUnitOfMeasRow == null || SelectedUnitOfMeasRow.Id == null)
                 return;
             await _unitOfMeasService.RemoveUnitOfMeasAsync(SelectedUnitOfMeasRow.Id);
+            await UpdateUnitOfMeasTableAsync();
         }
 
         private async Task UpdateUnitOfMeasTableAsync()
@@ -521,6 +804,7 @@ namespace Administrator.ViewModel
             await UpdateTableMethodsOptimizationAsync();
         }
         #endregion
+
         #endregion
     }
 }
