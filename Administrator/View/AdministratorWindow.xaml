@@ -183,8 +183,20 @@
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Параметр"></TextBlock>
                                         <ComboBox ItemsSource="{Binding ParametersForTaskComboBox}"
-                                              SelectedItem="{Binding SelectedParameterForTaskComboBox}"
-                                              DisplayMemberPath="Name"></ComboBox>
+                                              SelectedItem="{Binding SelectedParameterForTaskComboBox}">
+                                            <ComboBox.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition/>
+                                                            <ColumnDefinition/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Margin="1" Grid.Column="0" Text="{Binding Description}"/>
+                                                        <TextBlock Margin="1" Grid.Column="1" Text="{Binding Notation}"/>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ComboBox.ItemTemplate>
+                                        </ComboBox>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Задача"></TextBlock>
@@ -194,7 +206,7 @@
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="Значение"></TextBlock>
-                                        <TextBox Text="{Binding ParameterByTaskValue}"></TextBox>
+                                        <TextBox x:Name="textBoxValue" Text="{Binding ParameterByTaskValue}"></TextBox>
                                     </StackPanel>
                                     <StackPanel>
                                         <Button Content="Добавить" Command="{Binding AddParameterForTaskCommand}"></Button>
