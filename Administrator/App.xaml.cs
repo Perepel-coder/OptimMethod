@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Threading;
-using Administrator.View;
-using Administrator.ViewModel;
 using Autofac;
 using AutofacDependence;
 using ProgramSystem.Bll.Services.Interfaces;
+using Startup.View;
+using Startup.ViewModel;
 
-namespace Administrator
+namespace Startup
 {
     /// <summary>
     /// Interaction logic for App.xaml

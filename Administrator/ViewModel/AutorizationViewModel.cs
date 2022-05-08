@@ -1,22 +1,14 @@
-﻿using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Reactive;
-using System.Reactive.Linq;
+﻿using System.Net;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using Administrator.View;
 using Autofac;
 using AutofacDependence;
 using ProgramSystem.Bll.Services.Interfaces;
+using ReactiveUI;
 using Services.Interfaces;
-using ServicesMVVM;
+using Startup.View;
 
-namespace Administrator.ViewModel
+namespace Startup.ViewModel
 {
     public class AutorizationViewModel: ReactiveObject
     {

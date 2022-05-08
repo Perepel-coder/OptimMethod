@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServer", "WebServer\WebS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutofacDependence", "AutofacDependence\AutofacDependence.csproj", "{C58F2BA0-ECB2-4D59-A0DB-5ABF93FE56EE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Administrator", "Administrator\Administrator.csproj", "{87DDC21F-FF82-43F9-AB8F-45A75AD7FCA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Startup", "Administrator\Startup.csproj", "{87DDC21F-FF82-43F9-AB8F-45A75AD7FCA0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User", "User\User.csproj", "{D6D560B1-10FE-48A7-9601-3A6C1DEB900C}"
 EndProject
@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelsView", "ModelsView\Mo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{11859DDF-6006-410F-9183-7610CBC7B208}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicesMVVM", "ServicesMVVM\ServicesMVVM.csproj", "{C4963443-2A05-44EA-9E29-2E782107F689}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicesMVVM", "ServicesMVVM\ServicesMVVM.csproj", "{C4963443-2A05-44EA-9E29-2E782107F689}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
