@@ -26,7 +26,7 @@ namespace Administrator.View
         }
         private void textBoxValue_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            if (!Char.IsDigit(e.Text, 0) && e.Text != ".") e.Handled = true;
+            if (!Char.IsDigit(e.Text, 0) && e.Text != "." && e.Text != "-") e.Handled = true;
         }
     }
 }
