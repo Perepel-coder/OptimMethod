@@ -7,7 +7,7 @@ using User.Model;
 
 namespace User.ViewModel
 {
-    internal class UserViewModel : ReactiveObject
+    public class UserViewModel : ReactiveObject
     {
         #region поля
         private IContainer container = Container.GetBuilder().Build();

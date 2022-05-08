@@ -1,8 +1,11 @@
 using System;
+using System.Collections.ObjectModel;
 using AdministratorFormsWPF.ViewModel;
 using Autofac;
 using ProgramSystem.Bll.Services.Interfaces;
 using Services.Interfaces;
+using User.Model;
+using User.ViewModel;
 
 namespace AutofacWpfDependences
 {
@@ -17,6 +20,8 @@ namespace AutofacWpfDependences
                 c.Resolve<ITasksService>(),
                 c.Resolve<IUnitOfMeasService>()))
                 .AsSelf();
+
+            builder.RegisterType<UserViewModel>().AsSelf();
         }
     }
 }

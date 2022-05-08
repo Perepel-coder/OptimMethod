@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AdministratorFormsWPF\AdministratorFormsWPF.csproj" />
+    <ProjectReference Include="..\User\User.csproj" />
   </ItemGroup>
 
 </Project>

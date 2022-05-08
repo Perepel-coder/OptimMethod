@@ -2,15 +2,11 @@
 using System.Security;
 using System.Windows;
 using AdministratorFormsWPF.View;
-using AdministratorFormsWPF.ViewModel;
 using Autofac;
-using AutofacDependence;
-using AutofacWpfDependences;
 using ProgramSystem.Bll.Services.Interfaces;
 using ReactiveUI;
-using Services.Interfaces;
 using Startup.Autofac;
-using Startup.View;
+using User;
 
 namespace Startup.ViewModel
 {
@@ -78,6 +74,12 @@ namespace Startup.ViewModel
             else if (user.Role == "user")
             {
                 // пользователь
+                var builderBase = new ContainerBuilder();
+                builderBase.RegisterAllModules();
+                var containerBase = builderBase.Build();
+
+                var viewBase = containerBase.Resolve<UserWindow>();
+                viewBase.Show();
             }
         }
 
