@@ -1,11 +1,15 @@
 ﻿using System.Net;
 using System.Security;
 using System.Windows;
+using AdministratorFormsWPF.View;
+using AdministratorFormsWPF.ViewModel;
 using Autofac;
 using AutofacDependence;
+using AutofacWpfDependences;
 using ProgramSystem.Bll.Services.Interfaces;
 using ReactiveUI;
 using Services.Interfaces;
+using Startup.Autofac;
 using Startup.View;
 
 namespace Startup.ViewModel
@@ -65,18 +69,9 @@ namespace Startup.ViewModel
             else if (user.Role == "admin")
             {
                 var builderBase = new ContainerBuilder();
-                builderBase.RegisterModule(new RepositoryModule());
-                builderBase.RegisterModule(new ServicesModule());
+                builderBase.RegisterAllModules();
                 var containerBase = builderBase.Build();
-
-                var viewmodelBase = new AdministrationViewModel(
-                    containerBase.Resolve<IUserService>(), 
-                    containerBase.Resolve<IMethodService>(),
-                    containerBase.Resolve<IParameterService>(),
-                    containerBase.Resolve<ITasksService>(),
-                    containerBase.Resolve<IUnitOfMeasService>());
-
-                var viewBase = new AdministratorWindow() { DataContext = viewmodelBase };
+                var viewBase = containerBase.Resolve<AdministratorWindow>();
 
                 viewBase.Show();
             }

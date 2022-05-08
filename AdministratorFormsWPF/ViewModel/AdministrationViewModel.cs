@@ -1,14 +1,14 @@
-﻿using System.Collections.ObjectModel;
+﻿using ProgramSystem.Bll.Services.Interfaces;
+using ReactiveUI;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using ModelsView;
-using ProgramSystem.Bll.Services.Interfaces;
-using ReactiveUI;
 using Services.Interfaces;
 using ServicesMVVM;
 
-namespace Startup.ViewModel
+namespace AdministratorFormsWPF.ViewModel
 {
     public class AdministrationViewModel :  ReactiveObject
     {

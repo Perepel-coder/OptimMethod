@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 
-namespace Startup.View
+namespace AdministratorFormsWPF.View
 {
     /// <summary>
     /// Логика взаимодействия для AdministratorWindow.xaml
