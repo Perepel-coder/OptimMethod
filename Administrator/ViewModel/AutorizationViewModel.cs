@@ -1,22 +1,14 @@
-﻿using ReactiveUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Reactive;
-using System.Reactive.Linq;
+﻿using System.Net;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using Administrator.View;
+using AdministratorFormsWPF.View;
 using Autofac;
-using AutofacDependence;
 using ProgramSystem.Bll.Services.Interfaces;
-using Services.Interfaces;
-using ServicesMVVM;
+using ReactiveUI;
+using Startup.Autofac;
+using User;
 
-namespace Administrator.ViewModel
+namespace Startup.ViewModel
 {
     public class AutorizationViewModel: ReactiveObject
     {
@@ -73,24 +65,21 @@ namespace Administrator.ViewModel
             else if (user.Role == "admin")
             {
                 var builderBase = new ContainerBuilder();
-                builderBase.RegisterModule(new RepositoryModule());
-                builderBase.RegisterModule(new ServicesModule());
+                builderBase.RegisterAllModules();
                 var containerBase = builderBase.Build();
-
-                var viewmodelBase = new AdministrationViewModel(
-                    containerBase.Resolve<IUserService>(), 
-                    containerBase.Resolve<IMethodService>(),
-                    containerBase.Resolve<IParameterService>(),
-                    containerBase.Resolve<ITasksService>(),
-                    containerBase.Resolve<IUnitOfMeasService>());
-
-                var viewBase = new AdministratorWindow() { DataContext = viewmodelBase };
+                var viewBase = containerBase.Resolve<AdministratorWindow>();
 
                 viewBase.Show();
             }
             else if (user.Role == "user")
             {
                 // пользователь
+                var builderBase = new ContainerBuilder();
+                builderBase.RegisterAllModules();
+                var containerBase = builderBase.Build();
+
+                var viewBase = containerBase.Resolve<UserWindow>();
+                viewBase.Show();
             }
         }
 

@@ -15,7 +15,7 @@ using Xceed.Wpf.Toolkit;
 
 namespace User.ViewModel
 {
-    internal class UserViewModel : ReactiveObject
+    public class UserViewModel : ReactiveObject
     {
         #region поля
         private ObservableCollection<string> listSing;
