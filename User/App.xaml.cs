@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using System.Windows;
 using User.Model;
+using User.View;
 using User.ViewModel;
 
 namespace User

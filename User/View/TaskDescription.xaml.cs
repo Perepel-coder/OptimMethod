@@ -12,14 +12,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace User
+namespace User.View
 {
     /// <summary>
-    /// Логика взаимодействия для Chart3D.xaml
+    /// Логика взаимодействия для TaskDescription.xaml
     /// </summary>
-    public partial class Chart3D : Window
+    public partial class TaskDescription : Window
     {
-        public Chart3D()
+        public TaskDescription()
         {
             InitializeComponent();
         }

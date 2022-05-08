@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -25,61 +26,35 @@ namespace User.Model
         public double Z { get; set; }
     }
 
-    internal static class Task
+    internal interface IMethod
     {
-        public static double GetTask15(Point2 point)      // вычисление значений целевой функции (вариант 15)
-        {
-            double a = 1, β = 1, y = 3.14, p1 = 1, p2 = 1, N = 2;
-            double sqrt = Math.Sqrt(Math.Pow(point.X, N) + Math.Pow(point.Y, N));
-            double FunctionValue = a * (point.X - β * p1) * Math.Cos(y * p2 * sqrt);
-            return FunctionValue;
-        }
-        public static double GetTask18(Point2 point)      // вычисление значений целевой функции (вариант 18)
-        {
-            double a = 1, β = 1, μ = 1, A = 1, G = 2, N = 2;
-            double FunctionValue = a * (G * μ * (Math.Pow(point.Y - point.X, N) + Math.Pow(β * A - point.X, N)));
-            return FunctionValue;
-        }
+        public string? Name { get; }
+        public Point2 Solve();
+        public void RegisterMethod(bool max, double k, double b, string sing,
+            double xmin, double xmax, double ymin, double ymax, double ε, task task);
+        public ObservableCollection<Point3> GetChartData();
+        public ObservableCollection<Point2> GetChartLimitationData();
     }
 
-    // для функции 2-х переменных
-    internal class ComplexBoxingMethod
+    // для функции 2-х переменных метод Бокса
+    internal class ComplexBoxingMethod: IMethod
     {
-        private int N;  // число точек комплекса
-        private Point2 pointFbest;   // лучшее значение функции
-        private Point2 pointFworst;  // худшее значенеи функции
-        private Point2 centr;    // центр комплекса
-        private double xmin;    // нижнее ограничение по х
-        private double xmax;    // верхнее ограничение по x
-        private double ymin;    // нижнее ограничение по y
-        private double ymax;    // верхнее ограничение по y
-        private double k;       // k: y=kx+b
-        private double b;       // b: y=kx+b
-        private string sing;    // знак ограничения второго рода
-        private double ε;       // точность
-        private bool max;
+        public string? Name { get; } = "Комплекс-метод Бокса";
+        private int N;               // число точек комплекса
+        private Point2? pointFbest;   // лучшее значение функции
+        private Point2? pointFworst;  // худшее значенеи функции
+        private Point2? centr;        // центр комплекса
+        private double xmin;         // нижнее ограничение по х
+        private double xmax;         // верхнее ограничение по x
+        private double ymin;         // нижнее ограничение по y
+        private double ymax;         // верхнее ограничение по y
+        private double k;            // k: y=kx+b
+        private double b;            // b: y=kx+b
+        private string? sing;         // знак ограничения второго рода
+        private double ε;            // точность
+        private bool max;            // тип экстремума
+        private task task;           // задача
         //------------------------------------------
-
-        #region конструктор
-        public ComplexBoxingMethod(bool max, double k, double b, string sing,
-            double xmin, double xmax, double ymin, double ymax, double ε) 
-        {
-            this.pointFbest = new();
-            this.pointFworst = new();
-            this.centr = new();
-            this.N = 200;
-            this.xmin = xmin;
-            this.xmax = xmax;
-            this.ymin = ymin;
-            this.ymax = ymax;
-            this.max = max;
-            this.k = k;
-            this.b = b;
-            this.sing = sing;
-            this.ε = ε;
-        }
-        #endregion
-
         private bool CheckConditionSecondKind(double x, double y, string sing)  // проверить выполнение условия 2-ого рода
         {
             bool flag = false;
@@ -150,7 +125,7 @@ namespace User.Model
         {
             for (int i = 0; i < points.Count; i++)
             {
-                points[i].FunctionValue = Task.GetTask15(points[i]);
+                points[i].FunctionValue = task(points[i]);
             }
         }
         private void GetBestAndWorstValue(List<Point2> points)    // 3) Выбор наилучшего и наихудшего значения
@@ -253,7 +228,7 @@ namespace User.Model
                         points[i].Y = (points[i].Y + centr.Y) / 2.0f;
                     }
                     // 8) Вычисление значения целевой функции F0 в новой точке
-                    points[i].FunctionValue = Task.GetTask15(points[i]);
+                    points[i].FunctionValue = task(points[i]);
 
                     // 9) Нахождение новой вершины смещением xi0   на половину расстояния к лучшей из вершин комплекса
                     // 10) Замена наихудшей точки
@@ -263,7 +238,7 @@ namespace User.Model
                         {
                             points[i].X = (points[i].X + pointFbest.X) / 2.0f;
                             points[i].Y = (points[i].Y + pointFbest.Y) / 2.0f;
-                            points[i].FunctionValue = Task.GetTask15(points[i]);
+                            points[i].FunctionValue = task(points[i]);
                         }
                     }
                     else
@@ -272,7 +247,7 @@ namespace User.Model
                         {
                             points[i].X = (points[i].X + pointFbest.X) / 2.0f;
                             points[i].Y = (points[i].Y + pointFbest.Y) / 2.0f;
-                            points[i].FunctionValue = Task.GetTask15(points[i]);
+                            points[i].FunctionValue = task(points[i]);
                         }
                     }
                     break;
@@ -295,8 +270,25 @@ namespace User.Model
             }
             while (true);
         }
-
-        public ObservableCollection<Point3> GetChartData(task Task)
+        public void RegisterMethod(bool max, double k, double b, string sing,
+            double xmin, double xmax, double ymin, double ymax, double ε, task task)
+        {
+            this.pointFbest = new();
+            this.pointFworst = new();
+            this.centr = new();
+            this.N = 200;
+            this.xmin = xmin;
+            this.xmax = xmax;
+            this.ymin = ymin;
+            this.ymax = ymax;
+            this.max = max;
+            this.k = k;
+            this.b = b;
+            this.sing = sing;
+            this.ε = ε;
+            this.task = task;
+        }
+        public ObservableCollection<Point3> GetChartData()
         {
             float step = 0.1f;
             ObservableCollection<Point3> chart3dData = new();
@@ -304,7 +296,7 @@ namespace User.Model
             {
                 for (float j = ((float)ymin); j < ymax; j += step)
                 {
-                    chart3dData.Add(new Point3 { X = i, Y = j, Z = (float)Task(new Point2 { X = i, Y = j}) });
+                    chart3dData.Add(new Point3 { X = i, Y = j, Z = (float)task(new Point2 { X = i, Y = j}) });
                 }
             }
             return chart3dData;
@@ -336,5 +328,12 @@ namespace User.Model
             }
             return limitationData;
         }
+    }
+    internal static class Methodlist
+    {
+        public static List<IMethod> methods = new()
+        {
+            new ComplexBoxingMethod()
+        };
     }
 }

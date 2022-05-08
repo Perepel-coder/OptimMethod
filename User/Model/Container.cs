@@ -9,10 +9,9 @@ namespace User.Model
         public static ContainerBuilder GetBuilder()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterType<ComplexBoxingMethod>().AsSelf();
             builder.RegisterType<UserViewModel>().AsSelf();
-            builder.RegisterType<Chart3DViewModel>().AsSelf();
             builder.Register((c, p) => new Chart3DViewModel(p.Named<ObservableCollection<Point3>>("p1"))).AsSelf();
+            builder.Register((c, p) => new TaskDescriptionViewModel(p.Named<string>("p1"))).AsSelf();
             return builder;
         }
     }

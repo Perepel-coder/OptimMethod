@@ -10,17 +10,16 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace User
+namespace User.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Логика взаимодействия для Chart3D.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Chart3D : Window
     {
-        public MainWindow()
+        public Chart3D()
         {
             InitializeComponent();
         }
