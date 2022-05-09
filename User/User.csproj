@@ -18,8 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Administrator\Administrator.csproj" />
-    <ProjectReference Include="..\AutofacDependence\AutofacDependence.csproj" />
+	  <ProjectReference Include="..\AutofacDependence\AutofacDependence.csproj" />
     <ProjectReference Include="..\ModelsView\ModelsView.csproj" />
     <ProjectReference Include="..\ServicesMVVM\ServicesMVVM.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
