@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Numerics;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace User.Model
 {
@@ -34,6 +30,7 @@ namespace User.Model
             double xmin, double xmax, double ymin, double ymax, double ε, task task);
         public ObservableCollection<Point3> GetChartData();
         public ObservableCollection<Point2> GetChartLimitationData();
+        public List<List<Point3>> GetChartDataAsTable();
     }
 
     // для функции 2-х переменных метод Бокса
@@ -300,6 +297,20 @@ namespace User.Model
                 }
             }
             return chart3dData;
+        }
+        public List<List<Point3>> GetChartDataAsTable()
+        {
+            float step = 0.5f;
+            List<List<Point3>> data = new(); int row = 0;
+            for (float i = ((float)xmin); i < xmax; i += step, row++)
+            {
+                data.Add(new());
+                for (float j = ((float)ymin); j < ymax; j += step)
+                {
+                    data[row].Add(new Point3 { X = i, Y = j, Z = (float)task(new Point2 { X = i, Y = j }) });
+                }
+            }
+            return data;
         }
         public ObservableCollection<Point2> GetChartLimitationData()
         {

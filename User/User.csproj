@@ -12,7 +12,9 @@
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.3.0" />
     <PackageReference Include="Infragistics.WPF.Charts.Trial" Version="21.2.39" />
     <PackageReference Include="Infragistics.WPF.SurfaceChart3D.Trial" Version="21.2.39" />
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1000" />
     <PackageReference Include="ReactiveUI" Version="18.0.10" />
+    <PackageReference Include="Syncfusion.XlsIO.Wpf" Version="20.1.0.52" />
   </ItemGroup>
 
   <ItemGroup>

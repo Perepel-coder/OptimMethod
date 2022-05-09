@@ -10,26 +10,29 @@
         Title="Решение оптимизационных задач" Height="550" Width="800" WindowStartupLocation="CenterScreen" >
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
-            <ToolBar Height="25" VerticalAlignment="Top">
-                <Button Content="⇐"/>
+            <ToolBar VerticalAlignment="Top">
+                <!--<Button Content="⇐"/>-->
                 <Separator />
-                <Button Content="Сохранить как..."/>
+                <Button Content="Сохранить как..." Command="{Binding Saveresult}"/>
                 <Separator />
-                <Button Content="Справка"/>
+                <Button Content="Справка" Command="{Binding Reference}"/>
                 <Separator />
             </ToolBar>
         </DockPanel>
         <DockPanel DockPanel.Dock="Right">
             <GroupBox Header="Выбор задачи" DockPanel.Dock="Top">
                 <DockPanel Margin="5, 5, 5, 5">
-                    <ComboBox DockPanel.Dock="Top"></ComboBox>
+                    <ComboBox DockPanel.Dock="Top" ItemsSource="{Binding Gettasks}" DisplayMemberPath="Name"
+                              SelectedItem="{Binding GetcurrentTask}"/>
                     <Label DockPanel.Dock="Top" Content="Описание задачи"></Label>
-                    <Button DockPanel.Dock="Top" Content="Объект оптимизации (описание задачи)"/>
+                    <Button DockPanel.Dock="Top" Content="Объект оптимизации (описание задачи)"
+                            Command="{Binding TaskDescription}"/>
                 </DockPanel>
             </GroupBox>
             <GroupBox Header="Выбор метода оптимизации" DockPanel.Dock="Top">
                 <DockPanel Margin="5, 5, 5, 5">
-                    <ComboBox DockPanel.Dock="Top"></ComboBox>
+                    <ComboBox DockPanel.Dock="Top" ItemsSource="{Binding Getmethods}" DisplayMemberPath="Name"
+                              SelectedItem="{Binding GetcurrentMethod}"/>
                 </DockPanel>
             </GroupBox>
             <GroupBox Header="Определение ограничений" DockPanel.Dock="Top">
@@ -57,7 +60,7 @@
                         <wpfx:DoubleUpDown HorizontalContentAlignment="Center" Grid.Column="2"
                                            Value="{Binding Path = Getymax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Height="23" VerticalAlignment="Top"/>
                         <Label HorizontalContentAlignment="Center" Content="Погрешность расчетов ε:" Grid.Row="2" Grid.ColumnSpan="2"/>
-                        <wpfx:DoubleUpDown HorizontalContentAlignment="Center" Grid.Column="2" Grid.Row="2" Minimum="0.000001" 
+                        <wpfx:DoubleUpDown HorizontalContentAlignment="Center" Grid.Column="2" Grid.Row="2" Minimum="0.000001" Maximum="1"
                                            Value="{Binding Path = Getε, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                     <Grid Margin="5,5,5,5">
@@ -101,7 +104,7 @@
         </DockPanel>
         <DockPanel DockPanel.Dock="Left">
             <GroupBox DockPanel.Dock="Left" Header="График функции">
-                <Grid>
+                <DockPanel>
                     <ig:XamDataChart>
                         <ig:XamDataChart.Axes>
                             <ig:NumericXAxis x:Name="xAxis" Title="Ось X"/>
@@ -130,7 +133,7 @@
                                 ItemsSource="{Binding GetfunctionValue}"/>
                         </ig:XamDataChart.Series>
                     </ig:XamDataChart>
-                </Grid>
+                </DockPanel>
             </GroupBox>
         </DockPanel>
     </DockPanel>

@@ -14,7 +14,7 @@ namespace User
         private void _Startup(object sender, StartupEventArgs e)
         {
             var container = Container.GetBuilder().Build();
-            var view = new MainWindow { DataContext = container.Resolve<UserViewModel>() };
+            var view = new UserWindow { DataContext = container.Resolve<UserViewModel>() };
             view.Show();
         }
     }

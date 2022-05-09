@@ -12,6 +12,9 @@ using User.View;
 using System.Windows.Input;
 using User.Model;
 using Xceed.Wpf.Toolkit;
+using System.Collections.Generic;
+using User.Model.FileServices;
+using Syncfusion.XlsIO;
 
 namespace User.ViewModel
 {
@@ -26,7 +29,10 @@ namespace User.ViewModel
         private ObservableCollection<OptimizationMethodView> methods;
         private ObservableCollection<TaskParameterValueView> taskParameters;
         private OptimizationMethodView currentMethod;
+        private List<List<Point3>> exceldata;
         private TaskView currentTask;
+        private DialogService dialogService;
+        private FileService fileService;
         private double k;
         private double b;
         private double xmin;
@@ -159,6 +165,7 @@ namespace User.ViewModel
         private RelayCommand clear;
         private RelayCommand taskDescription;
         private RelayCommand reference;
+        private RelayCommand saveresult;
         public ICommand Start
         {
             get
@@ -190,6 +197,7 @@ namespace User.ViewModel
                                       $"X = {GetfunctionValue[0].X}\n" +
                                       $"Y = {GetfunctionValue[0].Y}\n" +
                                       $"F(X, Y) = {GetfunctionValue[0].FunctionValue}";
+                                      exceldata = method.GetChartDataAsTable();
                                       return;
                                   }
                               }
@@ -254,6 +262,44 @@ namespace User.ViewModel
                   {
                       string message = "Программный комплекс для решения задач оптимизации";
                       MessageBox.Show(message, "Справка");
+                  }));
+            }
+        }
+        public ICommand Saveresult
+        {
+            get
+            {
+                return saveresult ??
+                  (saveresult = new RelayCommand(obj =>
+                  {
+                      try
+                      {
+                          var builderBase = Container.GetBuilder().Build();
+                          dialogService = builderBase.Resolve<DialogService>();
+                          fileService = builderBase.Resolve<FileService>();
+                          string data = 
+                          $"Задача: {currentTask.Name}\n" +
+                          $"Метод: {currentMethod.Name}\n" +
+                          $"Значение целевой функции в точке\n" +
+                          $"X = {GetfunctionValue[0].X}\n" +
+                          $"Y = {GetfunctionValue[0].Y}\n" +
+                          $"F(X, Y) = {GetfunctionValue[0].FunctionValue}";
+                          IApplication application = SaveFile.SaveXls(exceldata, data);
+                          if(application == null) 
+                          {
+                              string message = "Не удалось сохранить файл. Недостатточно данных";
+                              MessageBox.Show(message, "Ошибка");
+                              return;
+                          }
+                          dialogService.SaveFileDialog();
+                          fileService.Save(dialogService.FilePath, application);
+                      }
+                      catch
+                      {
+                          string message = "Не удалось сохранить файл. Возможно у вас не установлен Excel";
+                          MessageBox.Show(message, "Ошибка");
+                      }
+
                   }));
             }
         }
