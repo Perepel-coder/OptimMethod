@@ -6,7 +6,7 @@ using Autofac;
 using ProgramSystem.Bll.Services.Interfaces;
 using ReactiveUI;
 using Startup.Autofac;
-using User;
+using User.View;
 
 namespace Startup.ViewModel
 {

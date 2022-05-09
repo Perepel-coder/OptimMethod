@@ -18,6 +18,7 @@
     <ProjectReference Include="..\AutofacWpfDependences\AutofacWpfDependences.csproj" />
     <ProjectReference Include="..\ServicesMVVM\ServicesMVVM.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
+    <ProjectReference Include="..\User\User.csproj" />
   </ItemGroup>
 
 </Project>

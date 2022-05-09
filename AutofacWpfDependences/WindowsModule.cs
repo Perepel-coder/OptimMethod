@@ -1,7 +1,7 @@
 using AdministratorFormsWPF.View;
 using AdministratorFormsWPF.ViewModel;
 using Autofac;
-using User;
+using User.View;
 using User.ViewModel;
 
 namespace AutofacWpfDependences;
