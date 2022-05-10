@@ -7,7 +7,7 @@
         xmlns:wpfx="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:User"
         mc:Ignorable="d"
-        Title="Решение оптимизационных задач" Height="550" Width="800" WindowStartupLocation="CenterScreen" >
+        Title="Решение оптимизационных задач" Height="610" Width="800" WindowStartupLocation="CenterScreen" >
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
             <ToolBar VerticalAlignment="Top">
@@ -86,6 +86,13 @@
                                            Value="{Binding Path = Getb, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                 </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Выбор экстремума" DockPanel.Dock="Top" Margin="5, 5, 5, 5">
+                <Grid>
+                    <ComboBox HorizontalContentAlignment="Center" Grid.Column="1" 
+                              ItemsSource="{Binding Path = GetlistExtremum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                              SelectedItem="{Binding Path = Getextremum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </Grid>
             </GroupBox>
             <GroupBox Header="Выполнение" DockPanel.Dock="Top">
                 <DockPanel Margin="5, 5, 5, 5">

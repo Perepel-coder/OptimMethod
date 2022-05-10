@@ -74,8 +74,8 @@ namespace User.Model
             bool flag = false;
             while (!flag)
             {
-                double x = this.xmin + (rnd.Next(1, 999) / 1000.0f) * (this.xmax - this.xmin);
-                double y = this.ymin + (rnd.Next(1, 999) / 1000.0f) * (this.ymax - this.ymin);
+                double x = this.xmin + (rnd.Next(1, 99) / 100.0f) * (this.xmax - this.xmin);
+                double y = this.ymin + (rnd.Next(1, 99) / 100.0f) * (this.ymax - this.ymin);
                 flag = CheckConditionSecondKind(x, y, this.sing);
                 if (flag)
                 {
@@ -263,7 +263,7 @@ namespace User.Model
                 if (pointFbest == pointFworst) { return points.Where(x => x.Quality == Quality.BEST).Select(el => el).Single(); }
                 end = GetCoordCenter(points, this.ε);
                 if (end) { return points.Where(x=>x.Quality == Quality.BEST).Select(el=>el).Single(); }
-                GetPointInsteadWorstPoint(true, points, this.ε);
+                GetPointInsteadWorstPoint(max, points, this.ε);
             }
             while (true);
         }

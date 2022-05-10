@@ -5,15 +5,12 @@ namespace User.Model
 {
     internal static class SaveFile
     {
-        public static IApplication SaveXls(List<List<Point3>> chart3Ddata, string data)
+        public static void SaveXls(List<List<Point3>> chart3Ddata, string data, IApplication application)
         {
-            ExcelEngine excelEngine = new();
-            IApplication application = excelEngine.Excel;
             IWorkbook workbook = application.Workbooks.Create(1);
             IWorksheet worksheet = workbook.Worksheets[0];
             worksheet.Name = "Решение задач оптимизации";
 
-            if (chart3Ddata == null) { return null; }
             for (int i = 0; i < chart3Ddata.Count; i++)
             {
                 for (int j = 0; j < chart3Ddata[i].Count; j++)
@@ -45,8 +42,6 @@ namespace User.Model
             worksheet.Range[chart.TopRow, chart.RightColumn + 1].AutofitColumns();
             worksheet.Range[chart.TopRow, chart.RightColumn + 1].AutofitRows();
             worksheet.Range[chart.TopRow, chart.RightColumn + 3].Text = data;
-
-            return application;
         }
     }
 }

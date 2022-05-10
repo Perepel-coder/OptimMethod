@@ -15,6 +15,7 @@ using Xceed.Wpf.Toolkit;
 using System.Collections.Generic;
 using User.Model.FileServices;
 using Syncfusion.XlsIO;
+using System;
 
 namespace User.ViewModel
 {
@@ -22,6 +23,7 @@ namespace User.ViewModel
     {
         #region поля
         private ObservableCollection<string> listSing;
+        private ObservableCollection<string> listExtremum;
         private ObservableCollection<Point2> functionValue;
         private ObservableCollection<Point3> chart3Ddata;
         private ObservableCollection<Point2> chart2Ddata;
@@ -33,13 +35,14 @@ namespace User.ViewModel
         private TaskView currentTask;
         private DialogService dialogService;
         private FileService fileService;
+        private string sing;
         private double k;
         private double b;
         private double xmin;
         private double xmax;
         private double ymin;
         private double ymax;
-        private string sing;
+        private string extremum;
         private string result;
         private double ε;
 
@@ -81,6 +84,11 @@ namespace User.ViewModel
             get { return listSing; }
             set { this.RaiseAndSetIfChanged(ref listSing, value); }
         }
+        public ObservableCollection<string> GetlistExtremum
+        {
+            get { return listExtremum; }
+            set { this.RaiseAndSetIfChanged(ref listExtremum, value); }
+        }
         public ObservableCollection<Point3> Getchart3Ddata
         {
             get { return chart3Ddata; }
@@ -121,6 +129,11 @@ namespace User.ViewModel
             get { return sing; }
             set { this.RaiseAndSetIfChanged(ref sing, value); }
         }
+        public string Getextremum
+        {
+            get { return extremum; }
+            set { this.RaiseAndSetIfChanged(ref extremum, value); }
+        }
         public string Getresult
         {
             get { return result; }
@@ -137,6 +150,8 @@ namespace User.ViewModel
         public UserViewModel()
         {
             GetlistSing = new() { ">", "<", "⩾", "⩽" };
+            GetlistExtremum = new() { "локальный максимум", "локальный минимум" };
+            Getextremum = "локальный максимум";
             Getsing = "⩾";
             Getk = 1;
             Getb = 2;
@@ -189,8 +204,20 @@ namespace User.ViewModel
                                       GetfunctionValue.Clear();
                                       var parameters = taskParameters.Where(x => x.TaskId == currentTask.IdTask).Select(el => el).ToList();
                                       task.RegisterTask(parameters);
-                                      method.RegisterMethod(true, k, b, sing, xmin, xmax, ymin, ymax, ε, task.GetTask);
+                                      if (Getextremum == "локальный максимум")
+                                      {
+                                          method.RegisterMethod(true, k, b, sing, xmin, xmax, ymin, ymax, ε, task.GetTask);
+                                      }
+                                      if (Getextremum == "локальный минимум")
+                                      {
+                                          method.RegisterMethod(false, k, b, sing, xmin, xmax, ymin, ymax, ε, task.GetTask);
+                                      }
+
+                                      int count = BitConverter.GetBytes(decimal.GetBits((decimal)ε)[3])[2];
                                       GetfunctionValue.Add(method.Solve());
+                                      GetfunctionValue[0].X = Math.Round(GetfunctionValue[0].X, count);
+                                      GetfunctionValue[0].Y = Math.Round(GetfunctionValue[0].Y, count);
+                                      GetfunctionValue[0].FunctionValue = Math.Round(GetfunctionValue[0].FunctionValue, count);
                                       Getchart3Ddata = method.GetChartData();
                                       Getchart2Ddata = method.GetChartLimitationData();
                                       Getresult = $"Значение целевой функции в точке\n" +
@@ -272,31 +299,36 @@ namespace User.ViewModel
                 return saveresult ??
                   (saveresult = new RelayCommand(obj =>
                   {
+                      IApplication application = (new ExcelEngine()).Excel;
+                      if (application == null)
+                      {
+                          MessageBox.Show("Excel не установлен на вашем устройстве", "Ошибка");
+                          return;
+                      }
+                      if (exceldata == null)
+                      {
+                          MessageBox.Show("Недостаточно данных", "Ошибка");
+                          return;
+                      }
+                      var builderBase = Container.GetBuilder().Build();
+                      dialogService = builderBase.Resolve<DialogService>();
+                      fileService = builderBase.Resolve<FileService>();
+                      string data =
+                      $"Задача: {currentTask.Name}\n" +
+                      $"Метод: {currentMethod.Name}\n" +
+                      $"Значение целевой функции в точке\n" +
+                      $"X = {GetfunctionValue[0].X}\n" +
+                      $"Y = {GetfunctionValue[0].Y}\n" +
+                      $"F(X, Y) = {GetfunctionValue[0].FunctionValue}";
+                      SaveFile.SaveXls(exceldata, data, application);
                       try
                       {
-                          var builderBase = Container.GetBuilder().Build();
-                          dialogService = builderBase.Resolve<DialogService>();
-                          fileService = builderBase.Resolve<FileService>();
-                          string data = 
-                          $"Задача: {currentTask.Name}\n" +
-                          $"Метод: {currentMethod.Name}\n" +
-                          $"Значение целевой функции в точке\n" +
-                          $"X = {GetfunctionValue[0].X}\n" +
-                          $"Y = {GetfunctionValue[0].Y}\n" +
-                          $"F(X, Y) = {GetfunctionValue[0].FunctionValue}";
-                          IApplication application = SaveFile.SaveXls(exceldata, data);
-                          if(application == null) 
-                          {
-                              string message = "Не удалось сохранить файл. Недостатточно данных";
-                              MessageBox.Show(message, "Ошибка");
-                              return;
-                          }
-                          dialogService.SaveFileDialog();
+                          if (!dialogService.SaveFileDialog()) { return; }
                           fileService.Save(dialogService.FilePath, application);
                       }
                       catch
                       {
-                          string message = "Не удалось сохранить файл. Возможно у вас не установлен Excel";
+                          string message = "Не удалось сохранить файл.";
                           MessageBox.Show(message, "Ошибка");
                       }
 
