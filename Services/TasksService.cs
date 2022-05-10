@@ -79,6 +79,7 @@ namespace Services
             ICollection<TaskParameterValueView> parameters = uow.ParameterTaskValueRepository.GetEntityQuery()
                 .Select(x => new TaskParameterValueView()
                 {
+                    TaskName = x.DescriptionTask.Name,
                     Description = x.Parameter.Description,
                     Notation = x.Parameter.Notation,
                     ParameterId = x.ParameterId,
@@ -95,6 +96,7 @@ namespace Services
             ICollection<TaskParameterValueView> parameters = await uow.ParameterTaskValueRepository.GetEntityQuery()
                 .Select(x => new TaskParameterValueView()
                 {
+                    TaskName = x.DescriptionTask.Name,
                     Description = x.Parameter.Description,
                     Notation = x.Parameter.Notation,
                     ParameterId = x.ParameterId,
@@ -112,6 +114,7 @@ namespace Services
                 .Where(z => z.DescriptionTaskId == taskId)
                 .Select(x => new TaskParameterValueView()
                 {
+                    TaskName = x.DescriptionTask.Name,
                     Description = x.Parameter.Description,
                     Notation = x.Parameter.Notation,
                     ParameterId = x.ParameterId,
@@ -128,6 +131,7 @@ namespace Services
                 .Where(z => z.DescriptionTaskId == taskId)
                 .Select(x => new TaskParameterValueView()
                 {
+                    TaskName = x.DescriptionTask.Name,
                     Description = x.Parameter.Description,
                     Notation = x.Parameter.Notation,
                     ParameterId = x.ParameterId,
