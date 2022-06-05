@@ -5,247 +5,289 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Окно администратора" Height="410" Width="700">
-    <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <Style TargetType="Button">
-            <Setter Property="Width" Value="auto"></Setter>
-            <Setter Property="Height" Value="30"></Setter>
-            <Setter Property="Margin" Value="0 3"></Setter>
-        </Style>
-        <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="0 3"></Setter>
-            <Setter Property="Height" Value="22"></Setter>
-            <Setter Property="Width" Value="90"></Setter>
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="Margin" Value="0 3"></Setter>
-            <Setter Property="Width" Value="150"></Setter>
-        </Style>
-        <Style TargetType="ComboBox">
-            <Setter Property="Margin" Value="0 3"></Setter>
-            <Setter Property="Width" Value="150"></Setter>
-        </Style>
-        <Style TargetType="CheckBox">
-            <Setter Property="Margin" Value="0 3"></Setter>
-            <Setter Property="Width" Value="150"></Setter>
-        </Style>
-        <Style TargetType="DataGrid">
-            <Setter Property="Width" Value="400"></Setter>
-            <Setter Property="Height" Value="270"></Setter>
-        </Style>
-    </Window.Resources>
-    <StackPanel>
+    <Grid>
         <TabControl>
             <TabItem Header="Пользователи">
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <StackPanel Margin="5,0,5,0">
-                        <TextBlock Width="200" Text="Список пользователей" HorizontalAlignment="Left"></TextBlock>
+                <Grid Margin="5,0,5,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="90*"/>
+                        <RowDefinition Height="50*"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25*"/>
+                            <RowDefinition Height="150*"/>
+                            <RowDefinition Height="25*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Список пользователей"/>
                         <DataGrid ItemsSource ="{Binding Path=UsersTable, Mode=TwoWay}"
-                                  SelectedItem="{Binding SelectedUserRow}"
-                                  CanUserDeleteRows="False" CanUserAddRows="False" IsReadOnly="True">
-                        </DataGrid>
-                        <Button Content="Обновить" Command="{Binding UpdateUsersListCommand}"></Button>
-                    </StackPanel>
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Login"></TextBlock>
-                            <TextBox Text="{Binding Login}"></TextBox>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Password"></TextBlock>
-                            <TextBox Text="{Binding Password}"></TextBox>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Роль"></TextBlock>
-                            <ComboBox  ItemsSource="{Binding Path=Roles}"    
-                                      SelectedItem="{Binding Path=SelectedRole}">
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel>
-                            <Button Content="Добавить" Command="{Binding AddUserCommand}"></Button>
-                            <Button Content="Удалить" Command="{Binding DeleteUserCommand}"></Button>
-                            <Button Content="Изменить" Command="{Binding EditUserCommand}"></Button>
-                            <Button Content="Очистить поля" Command="{Binding ClearUserPropertiesCommand}"></Button>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
+                                  SelectedItem="{Binding SelectedUserRow}" IsReadOnly="True" Grid.Row="1"/>
+                        <Button Content="Обновить" Command="{Binding UpdateUsersListCommand}" Grid.Row="2" Margin="0,5,0,0"/>
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50*"/>
+                            <ColumnDefinition Width="50*"/>
+                        </Grid.ColumnDefinitions>
+                        <GroupBox>
+                            <StackPanel>
+                                <TextBlock Text="Login"></TextBlock>
+                                <TextBox Text="{Binding Login}"></TextBox>
+                                <TextBlock Text="Password"></TextBlock>
+                                <TextBox Text="{Binding Password}"></TextBox>
+                                <TextBlock Text="Роль"></TextBlock>
+                                <ComboBox  ItemsSource="{Binding Path=Roles}"    
+                                      SelectedItem="{Binding Path=SelectedRole}"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Grid.Column="1">
+                            <StackPanel VerticalAlignment="Center">
+                                <Button Content="Добавить" Command="{Binding AddUserCommand}"></Button>
+                                <Button Content="Удалить" Command="{Binding DeleteUserCommand}" Margin="0,5,0,5"></Button>
+                                <Button Content="Изменить" Command="{Binding EditUserCommand}" Margin="0,0,0,5"></Button>
+                                <Button Content="Очистить поля" Command="{Binding ClearUserPropertiesCommand}"></Button>
+                            </StackPanel>
+                        </GroupBox>
+                    </Grid>
+                </Grid>
             </TabItem>
             <TabItem Header="Параметры">
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <StackPanel Margin="5,0,5,0">
-                        <TextBlock Text="Список параметров" Width="auto"></TextBlock>
+                <Grid Margin="5,0,5,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="90*"/>
+                        <RowDefinition Height="50*"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25*"/>
+                            <RowDefinition Height="150*"/>
+                            <RowDefinition Height="25*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Список параметров"/>
                         <DataGrid ItemsSource ="{Binding Path=ParametersTable, Mode=TwoWay}"
-                                  SelectedItem="{Binding SelectedParameterRow}"
-                                  CanUserDeleteRows="False" CanUserAddRows="False" IsReadOnly="True">
-                        </DataGrid>
-                        <Button Content="Обновить" Command="{Binding UpdateParametersCommand}"></Button>
-                    </StackPanel>
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Описание"></TextBlock>
-                            <TextBox Text="{Binding ParameterName}"></TextBox>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Обозначение"></TextBlock>
-                            <TextBox Text="{Binding Notation}"></TextBox>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Ед. измерения"></TextBlock>
-                            <ComboBox ItemsSource="{Binding Path=UnitsOfMeasComboBox}"    
-                                      SelectedItem="{Binding Path=SelectedUnitOfMeas}">
-                            </ComboBox>
-                        </StackPanel>
-                        <StackPanel>
-                            <Button Content="Добавить" Command="{Binding AddParameterCommand}"></Button>
-                            <Button Content="Удалить" Command="{Binding DeleteParameterCommand}"></Button>
-                            <Button Content="Изменить" Command="{Binding EditParameterCommand}"></Button>
-                            <Button Content="Очистить поля" Command="{Binding ClearParameterPropertiesCommand}"></Button>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
+                                  SelectedItem="{Binding SelectedParameterRow}" IsReadOnly="True" Grid.Row="1"/>
+                        <Button Content="Обновить" Command="{Binding UpdateParametersCommand}" Grid.Row="2" Margin="0,5,0,5" VerticalAlignment="Center"/>
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50*"/>
+                            <ColumnDefinition Width="50*"/>
+                        </Grid.ColumnDefinitions>
+                        <GroupBox>
+                            <StackPanel>
+                                <TextBlock Text="Описание"></TextBlock>
+                                <TextBox Text="{Binding ParameterName}"></TextBox>
+                                <TextBlock Text="Обозначение"></TextBlock>
+                                <TextBox Text="{Binding Notation}"></TextBox>
+                                <TextBlock Text="Ед. измерения"></TextBlock>
+                                <ComboBox ItemsSource="{Binding Path=UnitsOfMeasComboBox}"    
+                                      SelectedItem="{Binding Path=SelectedUnitOfMeas}"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Grid.Column="1">
+                            <StackPanel VerticalAlignment="Center">
+                                <Button Content="Добавить" Command="{Binding AddParameterCommand}"></Button>
+                                <Button Content="Удалить" Command="{Binding DeleteParameterCommand}" Margin="0,5,0,5"></Button>
+                                <Button Content="Изменить" Command="{Binding EditParameterCommand}" Margin="0,0,0,5"></Button>
+                                <Button Content="Очистить поля" Command="{Binding ClearParameterPropertiesCommand}"></Button>
+                            </StackPanel>
+                        </GroupBox>
+
+                    </Grid>
+                </Grid>
             </TabItem>
             <TabItem Header="Ед. измерения">
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <StackPanel Margin="5,0,5,0">
-                        <TextBlock Text="Список единиц измерений" Width="auto"></TextBlock>
+                <Grid Margin="5,0,5,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="90*"/>
+                        <RowDefinition Height="30*"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25*"/>
+                            <RowDefinition Height="150*"/>
+                            <RowDefinition Height="25*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Список единиц измерений"/>
                         <DataGrid ItemsSource ="{Binding Path=UnitOfMeasTable, Mode=TwoWay}"
-                                  SelectedItem="{Binding SelectedUnitOfMeasRow}"
-                                  CanUserDeleteRows="False" CanUserAddRows="False" IsReadOnly="True">
-                        </DataGrid>
-                        <Button Content="Обновить" Command="{Binding UpdateUnitOfMeasTableCommand}"></Button>
-                    </StackPanel>
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Наименование"></TextBlock>
-                            <TextBox Text="{Binding UnitOfMeasName}"></TextBox>
-                        </StackPanel>
-                        <StackPanel>
-                            <Button Content="Добавить" Command="{Binding AddUnitOfMeasCommand}"></Button>
-                            <Button Content="Удалить" Command="{Binding DeleteUnitOfMeasCommand}"></Button>
-                            <Button Content="Очистить поля" Command="{Binding ClearUnitOfMeasCommand}"></Button>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
+                                  SelectedItem="{Binding SelectedUnitOfMeasRow}" IsReadOnly="True" Grid.Row="1"/>
+                        <Button Content="Обновить" Command="{Binding UpdateUnitOfMeasTableCommand}" Grid.Row="2" Margin="0,5,0,0"/>
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50*"/>
+                            <ColumnDefinition Width="50*"/>
+                        </Grid.ColumnDefinitions>
+                        <GroupBox>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Наименование"></TextBlock>
+                                <TextBox Text="{Binding UnitOfMeasName}"></TextBox>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Grid.Column="1">
+                            <StackPanel VerticalAlignment="Center">
+                                <Button Content="Добавить" Command="{Binding AddUnitOfMeasCommand}"></Button>
+                                <Button Content="Удалить" Command="{Binding DeleteUnitOfMeasCommand}" Margin="0,5,0,5"></Button>
+                                <Button Content="Очистить поля" Command="{Binding ClearUnitOfMeasCommand}"></Button>
+                            </StackPanel>
+                        </GroupBox>
+                    </Grid>
+                </Grid>
             </TabItem>
             <TabItem Header="Задачи оптимизации">
-                <StackPanel>
+                <Grid>
                     <TabControl>
                         <TabItem Header="Задачи">
-                            <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                                <StackPanel Margin="5,0,5,0">
-                                    <TextBlock Text="Список задач" Width="auto"></TextBlock>
+                            <Grid Margin="5,0,5,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="50*"/>
+                                    <RowDefinition Height="50*"/>
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="25*"/>
+                                        <RowDefinition Height="150*"/>
+                                        <RowDefinition Height="25*"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="Список задач"/>
                                     <DataGrid ItemsSource ="{Binding Path=TasksTable, Mode=TwoWay}"
                                           SelectedItem="{Binding SelectedTaskRow}"
-                                          CanUserDeleteRows="False" CanUserAddRows="False" IsReadOnly="True"
-                                          Width="400" Height="250">
-                                    </DataGrid>
-                                    <Button Content="Обновить таблицу" Command="{Binding UpdateTasksTableCommand}"></Button>
-                                </StackPanel>
-                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Наименование"></TextBlock>
-                                        <TextBox Text="{Binding TaskName}"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Описание"></TextBlock>
-                                        <TextBox AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
-                                             TextWrapping="Wrap" Height="135"
-                                             Text="{Binding TaskDescroption}"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel>
-                                        <Button Content="Добавить" Command="{Binding AddTaskCommand}"></Button>
-                                        <Button Content="Удалить" Command="{Binding DeleteTaskCommand}"></Button>
-                                        <Button Content="Редактировать" Command="{Binding EditTaskCommand}"></Button>
-                                        <Button Content="Очистить поля" Command="{Binding ClearTaskPropertiesCommand}"></Button>
-                                    </StackPanel>
-                                </StackPanel>
-                            </StackPanel>
+                                          CanUserDeleteRows="False" CanUserAddRows="False" IsReadOnly="True" Grid.Row="1"/>
+                                    <Button Content="Обновить таблицу" Command="{Binding UpdateTasksTableCommand}" Grid.Row="2" Margin="0,5,0,0"/>
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50*"/>
+                                        <ColumnDefinition Width="50*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <Label Content="Наименование"/>
+                                            <TextBox Text="{Binding TaskName}"/>
+                                            <Label Content="Описание"/>
+                                            <TextBox MaxHeight="200" AcceptsReturn="True" VerticalScrollBarVisibility="Visible"
+                                             TextWrapping="Wrap" Text="{Binding TaskDescroption}"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Grid.Column="1">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <Button Content="Добавить" Command="{Binding AddTaskCommand}"></Button>
+                                            <Button Content="Удалить" Command="{Binding DeleteTaskCommand}" Margin="0,5,0,5"></Button>
+                                            <Button Content="Редактировать" Command="{Binding EditTaskCommand}" Margin="0,0,0,5"></Button>
+                                            <Button Content="Очистить поля" Command="{Binding ClearTaskPropertiesCommand}"></Button>
+                                        </StackPanel>
+                                    </GroupBox>
+                                </Grid>
+                            </Grid>
                         </TabItem>
                         <TabItem Header="Параметры задачи">
-                            <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                                <StackPanel Margin="5,0,5,0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Список параметров по задаче" Width="auto"></TextBlock>
-                                        <ComboBox Margin="5 3" 
+                            <Grid Margin="5,0,5,0" >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="90*"/>
+                                    <RowDefinition Height="50*"/>
+                                </Grid.RowDefinitions>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="25*"/>
+                                        <RowDefinition Height="25*"/>
+                                        <RowDefinition Height="140*"/>
+                                        <RowDefinition Height="25*"/>
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="Список параметров по задаче" Width="auto"></TextBlock>
+                                    <ComboBox
                                                   ItemsSource="{Binding TasksForViewParametersComboBox}"
                                                   SelectedItem="{Binding SelectedTaskForViewParameters}"
-                                                  DisplayMemberPath="Name"></ComboBox>
-                                    </StackPanel>
+                                                  DisplayMemberPath="Name" Grid.Row="1" Margin="0,0,0,5"/>
                                     <DataGrid ItemsSource ="{Binding Path=ParametersByTaskTable, Mode=TwoWay}"
                                               SelectedItem="{Binding SelectedParameterByTaskRow}"
-                                              CanUserDeleteRows="False" CanUserAddRows="False" IsReadOnly="True"
-                                              Width="400" Height="250">
-                                    </DataGrid>
-                                    <Button Content="Обновить таблицу" Command="{Binding UpdateParametersForTaskTableCommand}"></Button>
-                                </StackPanel>
-                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Параметр"></TextBlock>
-                                        <ComboBox ItemsSource="{Binding ParametersForTaskComboBox}"
+                                              IsReadOnly="True" Grid.Row="2"/>
+                                    <Button Content="Обновить таблицу" Command="{Binding UpdateParametersForTaskTableCommand}" Grid.Row="3" Margin="0,5,0,0"/>
+                                </Grid>
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50*"/>
+                                        <ColumnDefinition Width="50*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <GroupBox>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Параметр"></TextBlock>
+                                            <ComboBox ItemsSource="{Binding ParametersForTaskComboBox}"
                                               SelectedItem="{Binding SelectedParameterForTaskComboBox}">
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition/>
-                                                            <ColumnDefinition/>
-                                                        </Grid.ColumnDefinitions>
-                                                        <TextBlock Margin="1" Grid.Column="0" Text="{Binding Description}"/>
-                                                        <TextBlock Margin="1" Grid.Column="1" Text="{Binding Notation}"/>
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Задача"></TextBlock>
-                                        <ComboBox ItemsSource="{Binding TasksComboBox}"
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition/>
+                                                                <ColumnDefinition/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Margin="1" Grid.Column="0" Text="{Binding Description}"/>
+                                                            <TextBlock Margin="1" Grid.Column="1" Text="{Binding Notation}"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+                                            <TextBlock Text="Задача"></TextBlock>
+                                            <ComboBox ItemsSource="{Binding TasksComboBox}"
                                               SelectedItem="{Binding SelectedTaskComboBox}"
                                               DisplayMemberPath="Name"></ComboBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="Значение"></TextBlock>
-                                        <TextBox x:Name="textBoxValue" Text="{Binding ParameterByTaskValue}"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel>
-                                        <Button Content="Добавить" Command="{Binding AddParameterForTaskCommand}"></Button>
-                                        <Button Content="Удалить" Command="{Binding DeleteParameterForTaskCommand}"></Button>
-                                        <Button Content="Редактировать" Command="{Binding EditParameterForTaskCommand}"></Button>
-                                        <Button Content="Очистить поля" Command="{Binding ClearTaskPropertiesCommand}"></Button>
-                                    </StackPanel>
-                                </StackPanel>
-                            </StackPanel>
+                                            <TextBlock Text="Значение"></TextBlock>
+                                            <TextBox x:Name="textBoxValue" Text="{Binding ParameterByTaskValue}"></TextBox>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Grid.Column="1">
+                                        <StackPanel VerticalAlignment="Center">
+                                            <Button Content="Добавить" Command="{Binding AddParameterForTaskCommand}"></Button>
+                                            <Button Content="Удалить" Command="{Binding DeleteParameterForTaskCommand}" Margin="0,5,0,5"></Button>
+                                            <Button Content="Редактировать" Command="{Binding EditParameterForTaskCommand}" Margin="0,0,0,5"></Button>
+                                            <Button Content="Очистить поля" Command="{Binding ClearTaskPropertiesCommand}"></Button>
+                                        </StackPanel>
+                                    </GroupBox>
+                                </Grid>
+                            </Grid>
                         </TabItem>
                     </TabControl>
-                </StackPanel>
+                </Grid>
             </TabItem>
             <TabItem Header="Методы оптимизации">
-                <StackPanel Orientation="Horizontal" Margin="0,5,0,5">
-                    <StackPanel Margin="5,0,5,0">
-                        <TextBlock Text="Список методов оптимизации" Width="auto"></TextBlock>
+                <Grid Margin="5,0,5,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="90*"/>
+                        <RowDefinition Height="50*"/>
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="25*"/>
+                            <RowDefinition Height="150*"/>
+                            <RowDefinition Height="25*"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Список методов оптимизации"/>
                         <DataGrid ItemsSource ="{Binding Path=OptimizationMethodsTable, Mode=TwoWay}"
-                                  SelectedItem="{Binding SelectedOptimizationMethodRow}"
-                                  CanUserDeleteRows="False" CanUserAddRows="False" IsReadOnly="True">
-                        </DataGrid>
-                        <Button Content="Обновить" Command="{Binding UpdateTableOptimizationMethodCommand}"></Button>
-                    </StackPanel>
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5,0,0,0">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Наименование"></TextBlock>
-                            <TextBox Text="{Binding MethodOptimizationName}"></TextBox>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox Content="Есть реализация" IsChecked="{Binding IsRealisedOptimizationMethod}"></CheckBox>
-                        </StackPanel>
-                        <StackPanel>
-                            <Button Content="Добавить" Command="{Binding AddOptimizationMethodCommand}"></Button>
-                            <Button Content="Удалить" Command="{Binding DeleteOptimizationMethodCommand}"></Button>
-                            <Button Content="Редактировать" Command="{Binding EditOptimizationMethodAsyncCommand}"></Button>
-                            <Button Content="Очистить поля" Command="{Binding ClearPropertiesMehodsOptimizationCommand}"></Button>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
+                                  SelectedItem="{Binding SelectedOptimizationMethodRow}" IsReadOnly="True" Grid.Row="1"/>
+                        <Button Content="Обновить" Command="{Binding UpdateTableOptimizationMethodCommand}" Grid.Row="2" Margin="0,5,0,0"/>
+                    </Grid>
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50*"/>
+                            <ColumnDefinition Width="50*"/>
+                        </Grid.ColumnDefinitions>
+                        <GroupBox>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Наименование"></TextBlock>
+                                <TextBox Text="{Binding MethodOptimizationName}"/>
+                                <CheckBox Content="Есть реализация" IsChecked="{Binding IsRealisedOptimizationMethod}"/>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Grid.Column="1">
+                            <StackPanel VerticalAlignment="Center">
+                                <Button Content="Добавить" Command="{Binding AddOptimizationMethodCommand}"></Button>
+                                <Button Content="Удалить" Command="{Binding DeleteOptimizationMethodCommand}" Margin="0,5,0,5"></Button>
+                                <Button Content="Редактировать" Command="{Binding EditOptimizationMethodAsyncCommand}" Margin="0,0,0,5"></Button>
+                                <Button Content="Очистить поля" Command="{Binding ClearPropertiesMehodsOptimizationCommand}"></Button>
+                            </StackPanel>
+                        </GroupBox>
+                    </Grid>
+                </Grid>
             </TabItem>
         </TabControl>
-    </StackPanel>
+    </Grid>
 </Window>

@@ -6,7 +6,7 @@
         xmlns:ig="http://schemas.infragistics.com/xaml"
         xmlns:local="clr-namespace:User"
         mc:Ignorable="d"
-        Title="График функции 3D" Height="450" Width="800">
+        Title="График функции 3D" Height="400" Width="400">
     <Grid>
         <ig:XamScatterSurface3D 
                     ItemsSource="{Binding Path = Getchart3Ddata, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"

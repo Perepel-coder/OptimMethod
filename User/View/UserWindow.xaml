@@ -7,11 +7,10 @@
         xmlns:wpfx="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:User"
         mc:Ignorable="d"
-        Title="Решение оптимизационных задач" Height="610" Width="800" WindowStartupLocation="CenterScreen" >
+        Title="Решение оптимизационных задач" Height="550" Width="900" WindowStartupLocation="CenterScreen" >
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
             <ToolBar VerticalAlignment="Top">
-                <!--<Button Content="⇐"/>-->
                 <Separator />
                 <Button Content="Сохранить как..." Command="{Binding Saveresult}"/>
                 <Separator />
@@ -19,23 +18,30 @@
                 <Separator />
             </ToolBar>
         </DockPanel>
+        <Grid DockPanel.Dock="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70*"/>
+                <ColumnDefinition Width="50*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox Header="Выбор задачи">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="50*"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox ItemsSource="{Binding Gettasks}" DisplayMemberPath="Name"
+                              SelectedItem="{Binding GetcurrentTask}" Margin="0,0,5,0"/>
+                    <Button Content="Объект оптимизации (описание задачи)"
+                            Command="{Binding TaskDescription}" Grid.Column="1"/>
+                </Grid>
+            </GroupBox>
+            <GroupBox Header="Выбор метода оптимизации" Grid.Column="1">
+                <ComboBox DockPanel.Dock="Top" DisplayMemberPath="Name"
+                          ItemsSource="{Binding Getmethods}" SelectedItem="{Binding GetcurrentMethod}"/>
+            </GroupBox>
+        </Grid>
         <DockPanel DockPanel.Dock="Right">
-            <GroupBox Header="Выбор задачи" DockPanel.Dock="Top">
-                <DockPanel Margin="5, 5, 5, 5">
-                    <ComboBox DockPanel.Dock="Top" ItemsSource="{Binding Gettasks}" DisplayMemberPath="Name"
-                              SelectedItem="{Binding GetcurrentTask}"/>
-                    <Label DockPanel.Dock="Top" Content="Описание задачи"></Label>
-                    <Button DockPanel.Dock="Top" Content="Объект оптимизации (описание задачи)"
-                            Command="{Binding TaskDescription}"/>
-                </DockPanel>
-            </GroupBox>
-            <GroupBox Header="Выбор метода оптимизации" DockPanel.Dock="Top">
-                <DockPanel Margin="5, 5, 5, 5">
-                    <ComboBox DockPanel.Dock="Top" ItemsSource="{Binding Getmethods}" DisplayMemberPath="Name"
-                              SelectedItem="{Binding GetcurrentMethod}"/>
-                </DockPanel>
-            </GroupBox>
-            <GroupBox Header="Определение ограничений" DockPanel.Dock="Top">
+            <GroupBox Header="Область построения графика" DockPanel.Dock="Top">
                 <StackPanel>
                     <Grid Margin="5,5,5,5">
                         <Grid.RowDefinitions>
@@ -49,18 +55,14 @@
                             <ColumnDefinition Width="40*"/>
                             <ColumnDefinition Width="70*"/>
                         </Grid.ColumnDefinitions>
-                        <wpfx:DoubleUpDown HorizontalContentAlignment="Center" 
-                                           Value="{Binding Path = Getxmin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <wpfx:DoubleUpDown Value="{Binding Path = Getxmin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <Label HorizontalContentAlignment="Center" Content="⩾ Х ⩾" Grid.Column="1"/>
-                        <wpfx:DoubleUpDown HorizontalContentAlignment="Center" Grid.Column="2"
-                                           Value="{Binding Path = Getxmax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        <wpfx:DoubleUpDown HorizontalContentAlignment="Center" 
-                                           Value="{Binding Path = Getymin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1"/>
+                        <wpfx:DoubleUpDown Grid.Column="2" Value="{Binding Path = Getxmax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <wpfx:DoubleUpDown Grid.Row="1" Value="{Binding Path = Getymin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         <Label HorizontalContentAlignment="Center" Content="⩾ Y ⩾" Grid.Column="1" Grid.Row="1"/>
-                        <wpfx:DoubleUpDown HorizontalContentAlignment="Center" Grid.Column="2"
-                                           Value="{Binding Path = Getymax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Height="23" VerticalAlignment="Top"/>
-                        <Label HorizontalContentAlignment="Center" Content="Погрешность расчетов ε:" Grid.Row="2" Grid.ColumnSpan="2"/>
-                        <wpfx:DoubleUpDown HorizontalContentAlignment="Center" Grid.Column="2" Grid.Row="2" Minimum="0.000001" Maximum="1"
+                        <wpfx:DoubleUpDown Grid.Column="2" Grid.Row="1" Value="{Binding Path = Getymax, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Content="Погрешность (точность) расчетов ε:" Grid.Row="2" Grid.ColumnSpan="2"/>
+                        <wpfx:DoubleUpDown Grid.Column="2" Grid.Row="2" Minimum="0.000001" Maximum="1"
                                            Value="{Binding Path = Getε, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                     <Grid Margin="5,5,5,5">
@@ -87,28 +89,58 @@
                     </Grid>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Выбор экстремума" DockPanel.Dock="Top" Margin="5, 5, 5, 5">
-                <Grid>
-                    <ComboBox HorizontalContentAlignment="Center" Grid.Column="1" 
+            <GroupBox DockPanel.Dock="Top" Header="Параметры функции и параметры графика">
+                <DockPanel Margin="5, 5, 5, 5">
+                    <StackPanel>
+                        <Label Content="Искомый экстремум:"/>
+                        <Label Margin="0,3,0,0" Content="Шаг построения графика:" />
+
+                        <Label Margin="0,3,0,0" Content="Размер комплекса (популяции):"/>
+                    </StackPanel>
+                    <StackPanel>
+                        <ComboBox HorizontalContentAlignment="Center" Grid.Column="1" Height="29"
                               ItemsSource="{Binding Path = GetlistExtremum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                               SelectedItem="{Binding Path = Getextremum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                </Grid>
-            </GroupBox>
-            <GroupBox Header="Выполнение" DockPanel.Dock="Top">
-                <DockPanel Margin="5, 5, 5, 5">
-                    <Button DockPanel.Dock="Top" Content="Построить 3D График" Command="{Binding Build3DChart}"/>
-                    <Button DockPanel.Dock="Top" Content="Очистить график" Command="{Binding Clear}"/>
-                    <Button DockPanel.Dock="Top" Content="Рассчитать" Command="{Binding Start}"/>
-
+                        <wpfx:DoubleUpDown Height="29" Minimum="0.1"
+                            Value="{Binding Path = Getstep, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <wpfx:IntegerUpDown Height="29" Minimum="4"
+                            Value="{Binding Path =GetcountComplex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
                 </DockPanel>
             </GroupBox>
-            <GroupBox Header="Результаты" DockPanel.Dock="Top">
-                <DockPanel Margin="5, 5, 5, 5">
-                    <TextBox IsReadOnly="True"
-                        Text="{Binding Path = Getresult, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                </DockPanel>
+            <GroupBox Header="Функционал програмного комплекса" DockPanel.Dock="Top">
+                <StackPanel Margin="5, 5, 5, 5">
+                    <Button Content="Построить 3D График" Command="{Binding Build3DChart}"/>
+                    <Button Content="Очистить график" Command="{Binding Clear}"/>
+                    <Button Content="Рассчитать" Command="{Binding Start}"/>
+                </StackPanel>
             </GroupBox>
         </DockPanel>
+        <DockPanel DockPanel.Dock="Bottom">
+            <GroupBox Header="Результаты поиска экстремума">
+                <StackPanel>
+                    <TextBox IsReadOnly="True" MinHeight="130"
+                        Text="{Binding Path = Getresult, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                        <Label Content="Округление результата"/>
+                        <wpfx:IntegerUpDown Height="29" Minimum="0" Maximum="6"
+                            Value="{Binding Path = Getrnd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    </StackPanel>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Формализованное описание целевой функции" MaxHeight="200">
+                <Image Source="{Binding GetDescriptionPicture}"/>
+            </GroupBox>
+        </DockPanel>
+        <GroupBox DockPanel.Dock="Left" Header="Параметры функции" ScrollViewer.CanContentScroll="True">
+            <DataGrid AutoGenerateColumns="False"
+                      ItemsSource = "{Binding GettaskParameters}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn IsReadOnly="True" Header="Название" Binding="{Binding Notation}"/>
+                    <DataGridTextColumn Header="Значение" Binding="{Binding Value}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
         <DockPanel DockPanel.Dock="Left">
             <GroupBox DockPanel.Dock="Left" Header="График функции">
                 <DockPanel>
