@@ -181,11 +181,11 @@ namespace User.ViewModel
                 if (GetfunctionValue.Count != 0) 
                 { 
                     var res = GetfunctionValue[0].Round(rnd);
-                    Getresult = 
-                        $"Значение целевой функции в точке\n" +
-                        $"X = {res.X}\n" +
-                        $"Y = {res.Y}\n" +
-                        $"Z(X, Y) = {res.FunctionValue}";
+                    Getresult = Tasklist.tasks
+                        .Where(el=>el.Name == currentTask.Name)
+                        .Select(el=>el)
+                        .Single()
+                        .OutputResult(res);
                 }
             }
         }
@@ -315,42 +315,36 @@ namespace User.ViewModel
                       }
                       foreach(ITask task in Tasklist.tasks)
                       {
-                          foreach (var name in task.Name)
+                          if (task.Name == currentTask.Name)
                           {
-                              if (name == currentTask.Name)
+                              foreach (IMethod method in Methodlist.methods)
                               {
-                                  foreach (IMethod method in Methodlist.methods)
+                                  if (method.Name == currentMethod.Name)
                                   {
-                                      if (method.Name == currentMethod.Name)
+                                      GetfunctionValue.Clear();
+                                      task.RegisterTask(new List<TaskParameterValueView>(taskParameters));
+                                      if (Getextremum == "условный максимум")
                                       {
-                                          GetfunctionValue.Clear();
-                                          task.RegisterTask(new List<TaskParameterValueView>(taskParameters));
-                                          if (Getextremum == "условный максимум")
-                                          {
-                                              variableFunctionLimitations.TypeOfExtremum = true;
-                                              method.RegisterMethod(variableFunctionLimitations, task.GetTask);
-                                          }
-                                          if (Getextremum == "условный минимум")
-                                          {
-                                              variableFunctionLimitations.TypeOfExtremum = false;
-                                              method.RegisterMethod(variableFunctionLimitations, task.GetTask);
-                                          }
-                                          try { GetfunctionValue.Add(method.Solve()); }
-                                          catch 
-                                          {
-                                              MessageBox.Show("Неверно заданы некоторые параметры функции", "Ошибка");
-                                              return;
-                                          }
-                                          var res = GetfunctionValue[0].Round(this.rnd);
-                                          Getchart3Ddata = method.GetChartData();
-                                          Getchart2Ddata = method.GetChartLimitationData();
-                                          Getresult = $"Значение целевой функции в точке\n" +
-                                          $"X = {res.X}\n" +
-                                          $"Y = {res.Y}\n" +
-                                          $"Z(X, Y) = {res.FunctionValue}";
-                                          exceldata = method.GetChartDataAsTable();
+                                          variableFunctionLimitations.TypeOfExtremum = true;
+                                          method.RegisterMethod(variableFunctionLimitations, task.GetTask);
+                                      }
+                                      if (Getextremum == "условный минимум")
+                                      {
+                                          variableFunctionLimitations.TypeOfExtremum = false;
+                                          method.RegisterMethod(variableFunctionLimitations, task.GetTask);
+                                      }
+                                      try { GetfunctionValue.Add(method.Solve()); }
+                                      catch
+                                      {
+                                          MessageBox.Show("Неверно заданы некоторые параметры функции", "Ошибка");
                                           return;
                                       }
+                                      var res = GetfunctionValue[0].Round(this.rnd);
+                                      Getchart3Ddata = method.GetChartData();
+                                      Getchart2Ddata = method.GetChartLimitationData();
+                                      Getresult = task.OutputResult(res);
+                                      exceldata = method.GetChartDataAsTable();
+                                      return;
                                   }
                               }
                           }

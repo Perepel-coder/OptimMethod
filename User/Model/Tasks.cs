@@ -7,13 +7,14 @@ namespace User.Model
 {
     internal interface ITask
     {
-        public string[] Name { get; }
+        public string Name { get; }
         public double GetTask(double x, double y);
         public void RegisterTask(List<TaskParameterValueView> parameter);
+        public string OutputResult(PointOfFunction result);
     }
     internal class RegisterTask15: ITask
     {
-        public string[] Name { get; } = { "Вариант 15" };
+        public string Name { get; } = "Вариант 15";
         private double a;
         private double β;
         private double y;
@@ -37,10 +38,18 @@ namespace User.Model
             double FunctionValue = this.a * (x - this.β * this.p1) * Math.Cos(this.y * this.p2 * sqrt) * this.t;
             return FunctionValue;
         }
+        public string OutputResult(PointOfFunction result)
+        {
+            return 
+                $"Значение целевой функции в точке\n" +
+                $"X = {result.X}\n" +
+                $"Y = {result.Y}\n" +
+                $"Z(X, Y) = {result.FunctionValue}";
+        }
     }
     internal class RegisterTask18: ITask
     {
-        public string[] Name { get; } = { "Вариант 18" };
+        public string Name { get; } = "Вариант 18";
         private double a;
         private double β;
         private double μ;
@@ -64,31 +73,72 @@ namespace User.Model
             double FunctionValue = this.a * this.G * this.μ * pow * this.Cs;
             return FunctionValue;
         }
+        public string OutputResult(PointOfFunction result)
+        {
+            return
+                $"Значение целевой функции в точке\n" +
+                $"X = {result.X}\n" +
+                $"Y = {result.Y}\n" +
+                $"Z(X, Y) = {result.FunctionValue}";
+        }
     }
     internal class RegisterTask19 : ITask
     {
-        public string[] Name { get; } = { "Вариант 19" };
+        public string Name { get; } = "Вариант 19";
         private double Tr;
-        private double b;
+        private double H;
         private double W;
+        private double L;
+        private double F;
+        private double au;
+        private double μ0;
+        private double n;
+        private double b;
         private double p;
         private double c;
         private double T0;
         public void RegisterTask(List<TaskParameterValueView> parameter)
         {
-            this.a = parameter.Where(x => x.Notation == "α").Select(el => el.Value).Single();
-            this.β = parameter.Where(x => x.Notation == "β").Select(el => el.Value).Single();
-            this.μ = parameter.Where(x => x.Notation == "γ").Select(el => el.Value).Single();
-            this.A = parameter.Where(x => x.Notation == "A").Select(el => el.Value).Single();
-            this.G = parameter.Where(x => x.Notation == "G").Select(el => el.Value).Single();
-            this.N = parameter.Where(x => x.Notation == "N").Select(el => el.Value).Single();
-            this.Cs = parameter.Where(x => x.Notation == "Cs").Select(el => el.Value).Single();
+            this.Tr = parameter.Where(x => x.Notation == "Tr").Select(el => el.Value).Single();
+            this.H = parameter.Where(x => x.Notation == "H").Select(el => el.Value).Single();
+            this.W = parameter.Where(x => x.Notation == "W").Select(el => el.Value).Single();
+            this.L = parameter.Where(x => x.Notation == "L").Select(el => el.Value).Single();
+            this.au = parameter.Where(x => x.Notation == "au").Select(el => el.Value).Single();
+            this.μ0 = parameter.Where(x => x.Notation == "μ0").Select(el => el.Value).Single();
+            this.n = parameter.Where(x => x.Notation == "n").Select(el => el.Value).Single();
+            this.b = parameter.Where(x => x.Notation == "b").Select(el => el.Value).Single();
+            this.p = parameter.Where(x => x.Notation == "p").Select(el => el.Value).Single();
+            this.c = parameter.Where(x => x.Notation == "c").Select(el => el.Value).Single();
+            this.T0 = parameter.Where(x => x.Notation == "T0").Select(el => el.Value).Single();
+
+            this.F = 0.125f * Math.Pow(this.H / this.W, 2) - 0.625f * (this.H / this.W) + 1;
         }
         public double GetTask(double x, double y)
+        {   
+            double Qch = (this.H * this.W * x / 2.0f) * this.F;
+            double ym = x / this.H;
+            double qy = this.H * this.W * this.μ0 * Math.Pow(ym, this.n + 1);
+            double qa = this.W * this.au * (Math.Pow(this.b, -1) - y + this.Tr);
+
+            double calculation1 = (this.b * qy + this.W * this.au) / (this.b * qa);
+            double calculation2 = 1 - Math.Exp((-this.b * qa * this.L) / (this.p * this.c * Qch));
+            double calculation3 = Math.Exp(this.b * (this.T0 - this.Tr - ((qa * this.L) / (this.p * this.c * Qch))));
+
+            double T = this.Tr + Math.Pow(this.b, -1) * Math.Log(calculation1 * calculation2 + calculation3);
+            double η = this.μ0 * Math.Exp(-1.0f * this.b * (T - this.Tr) * Math.Pow(ym, this.n - 1));
+            return η;
+        }
+        public string OutputResult(PointOfFunction result)
         {
-            
-            double FunctionValue = this.a * this.G * this.μ * pow * this.Cs;
-            return FunctionValue;
+            double ym = result.X / this.H;
+            double Qch = (this.H * this.W * result.X / 2.0f) * this.F;
+            //double η = this.μ0 * Math.Exp(-this.b * (result.FunctionValue - this.Tr) * Math.Pow(ym, this.n - 1));
+            double Q = this.p * Qch;
+            return
+                $"Скорость движения крышки канала  (Vu) = {result.X}\n" +
+                $"Tемпература крышки канала (Tu) = {result.Y}\n" +
+                $"Вязкость материала в канале (η) = {result.FunctionValue}\n" +
+                $"Производительность канала (Q) = {Q}\n";
         }
     }
     internal static class Tasklist
@@ -96,7 +146,8 @@ namespace User.Model
         public static List<ITask> tasks = new List<ITask> 
         { 
             new RegisterTask15(), 
-            new RegisterTask18() 
+            new RegisterTask18(),
+            new RegisterTask19()
         };
     }
 }
