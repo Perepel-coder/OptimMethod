@@ -12,6 +12,7 @@ using Xceed.Wpf.Toolkit;
 using System.Collections.Generic;
 using User.Model.FileServices;
 using Syncfusion.XlsIO;
+using OptimizationMethods;
 
 namespace User.ViewModel
 {
@@ -39,9 +40,19 @@ namespace User.ViewModel
         private string result;
         private int rnd;
         private string formalizedDescriptionOfFunctionPicture;
+        private string descriptionOfMethod;
         #endregion
 
         #region get; set
+        public string GetdescriptionOfMethod
+        {
+            get { return descriptionOfMethod; }
+            set
+            {
+                var k = variableFunctionLimitations.k;
+                this.RaiseAndSetIfChanged(ref descriptionOfMethod, value);
+            }
+        }
         public double Getk
         {
             get { return variableFunctionLimitations.k; }
@@ -232,7 +243,13 @@ namespace User.ViewModel
         public OptimizationMethodView GetcurrentMethod
         {
             get { return currentMethod; }
-            set { this.RaiseAndSetIfChanged(ref currentMethod, value); }
+            set { 
+                this.RaiseAndSetIfChanged(ref currentMethod, value);
+                GetdescriptionOfMethod = Methodlist.methods
+                  .Where(el => el.Name == currentMethod.Name)
+                  .Single()
+                  .DescriptionOfAlgorithm();
+            }
         }
         public TaskView GetcurrentTask
         {
@@ -260,15 +277,15 @@ namespace User.ViewModel
         {
             variableFunctionLimitations = new();
             GetlistSing = new() { "⩾", "⩽" };
-            GetlistExtremum = new() { "условный максимум", "условный минимум" };
-            Getextremum = "условный минимум";
-            variableFunctionLimitations.Sing = "⩽";
-            variableFunctionLimitations.k = -1;
-            variableFunctionLimitations.b = 3;
-            variableFunctionLimitations.Xmin = -3;
-            variableFunctionLimitations.Xmax = 3;
-            variableFunctionLimitations.Ymin = -2;
-            variableFunctionLimitations.Ymax = 6;
+            GetlistExtremum = new() { "max", "min" };
+            Getextremum = "min";
+            variableFunctionLimitations.Sing = "⩾";
+            variableFunctionLimitations.k = 0;
+            variableFunctionLimitations.b = 0;
+            variableFunctionLimitations.Xmin = 0.5;
+            variableFunctionLimitations.Xmax = 1;
+            variableFunctionLimitations.Ymin = 0;
+            variableFunctionLimitations.Ymax = 160;
             variableFunctionLimitations.ε = 0.001;
             variableFunctionLimitations.step = 0.1;
             variableFunctionLimitations.countComplex = 500;
@@ -279,12 +296,12 @@ namespace User.ViewModel
             _methodService = methodService;
             Getrnd = 6;
             Gettasks = new (_taskService.GetAllTask());
-            GetcurrentTask = Gettasks[1];
+            GetcurrentTask = Gettasks[2];
             Getmethods = new (_methodService
                 .GetAllOptimizationMethods()
                 .Where(x=>x.IsRealized == true)
                 .Select(el=>el));
-            GetcurrentMethod = Getmethods[0];
+            GetcurrentMethod = Getmethods[2];
             GetDescriptionPicture = string.Join("", GetcurrentTask.Name.Split(" ")) + ".png";
             GettaskParameters = new(_taskService
                 .GetAllParametersValues()
@@ -298,6 +315,7 @@ namespace User.ViewModel
         private RelayCommand start;
         private RelayCommand build3DChart;
         private RelayCommand clear;
+        private RelayCommand description;
         private RelayCommand taskDescription;
         private RelayCommand reference;
         private RelayCommand saveresult;
@@ -323,12 +341,12 @@ namespace User.ViewModel
                                   {
                                       GetfunctionValue.Clear();
                                       task.RegisterTask(new List<TaskParameterValueView>(taskParameters));
-                                      if (Getextremum == "условный максимум")
+                                      if (Getextremum == "max")
                                       {
                                           variableFunctionLimitations.TypeOfExtremum = true;
                                           method.RegisterMethod(variableFunctionLimitations, task.GetTask);
                                       }
-                                      if (Getextremum == "условный минимум")
+                                      if (Getextremum == "min")
                                       {
                                           variableFunctionLimitations.TypeOfExtremum = false;
                                           method.RegisterMethod(variableFunctionLimitations, task.GetTask);
@@ -364,6 +382,17 @@ namespace User.ViewModel
                       Getchart3Ddata.Clear();
                       Getchart2Ddata.Clear();
                       Getresult = "";
+                  }));
+            }
+        }
+        public ICommand Description
+        {
+            get
+            {
+                return description ??
+                  (description = new RelayCommand(obj =>
+                  {
+                      MessageBox.Show(GetdescriptionOfMethod, "Справка");
                   }));
             }
         }

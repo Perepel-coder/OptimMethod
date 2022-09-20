@@ -1,4 +1,5 @@
 ﻿using ModelsView;
+using OptimizationMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -111,12 +112,14 @@ namespace User.Model
             this.c = parameter.Where(x => x.Notation == "c").Select(el => el.Value).Single();
             this.T0 = parameter.Where(x => x.Notation == "T0").Select(el => el.Value).Single();
 
-            this.F = 0.125f * Math.Pow(this.H / this.W, 2) - 0.625f * (this.H / this.W) + 1;
+            var h_w = (double)this.H / (double)this.W;
+            this.F = (0.125f * h_w * h_w) - (0.625f * h_w) + 1.0f;
         }
         public double GetTask(double x, double y)
         {   
-            double Qch = (this.H * this.W * x / 2.0f) * this.F;
-            double ym = x / this.H;
+            double Qch = ((this.H * this.W * x) / 2.0f) * this.F;
+            double ym = (double)x / (double)this.H;
+            var t = Math.Pow(ym, this.n + 1);
             double qy = this.H * this.W * this.μ0 * Math.Pow(ym, this.n + 1);
             double qa = this.W * this.au * (Math.Pow(this.b, -1) - y + this.Tr);
 
@@ -124,21 +127,22 @@ namespace User.Model
             double calculation2 = 1 - Math.Exp((-this.b * qa * this.L) / (this.p * this.c * Qch));
             double calculation3 = Math.Exp(this.b * (this.T0 - this.Tr - ((qa * this.L) / (this.p * this.c * Qch))));
 
-            double T = this.Tr + Math.Pow(this.b, -1) * Math.Log(calculation1 * calculation2 + calculation3);
-            double η = this.μ0 * Math.Exp(-1.0f * this.b * (T - this.Tr) * Math.Pow(ym, this.n - 1));
-            return η;
+            double T = this.Tr + (1.0f/this.b) * Math.Log(calculation1 * calculation2 + calculation3);
+            //double η = this.μ0 * Math.Exp(-this.b * (T - this.Tr)) * Math.Pow(ym, this.n - 1);
+            return T;
         }
         public string OutputResult(PointOfFunction result)
         {
             double ym = result.X / this.H;
-            double Qch = (this.H * this.W * result.X / 2.0f) * this.F;
-            //double η = this.μ0 * Math.Exp(-this.b * (result.FunctionValue - this.Tr) * Math.Pow(ym, this.n - 1));
-            double Q = this.p * Qch;
+            double η = this.μ0 * Math.Exp(-this.b * (result.FunctionValue - this.Tr)) * Math.Pow(ym, this.n - 1);
+            double Qch = ((this.H * this.W * result.X) / 2.0f) * this.F;
+            double Q = this.p * Qch * 3600.0f;
             return
-                $"Скорость движения крышки канала  (Vu) = {result.X}\n" +
-                $"Tемпература крышки канала (Tu) = {result.Y}\n" +
-                $"Вязкость материала в канале (η) = {result.FunctionValue}\n" +
-                $"Производительность канала (Q) = {Q}\n";
+                $"Скорость движения крышки канала X (Vu) = {result.X} м/с\n" +
+                $"Tемпература крышки канала Y (Tu) = {result.Y} °С\n" +
+                $"Температура смеси Z (T) = {result.FunctionValue} °С\n" +
+                $"Вязкость материала в канале Z (η) = {Math.Round(η, 4)} Па*с\n" +
+                $"Производительность канала (Q) = {Math.Round(Q, 4)} кг/ч\n";
         }
     }
     internal static class Tasklist

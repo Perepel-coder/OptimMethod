@@ -7,7 +7,7 @@
         xmlns:wpfx="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:User"
         mc:Ignorable="d"
-        Title="Решение оптимизационных задач" Height="550" Width="900" WindowStartupLocation="CenterScreen" >
+        Title="Решение оптимизационных задач" Height="550" Width="900" WindowStartupLocation="CenterScreen" WindowState="Maximized" >
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
             <ToolBar VerticalAlignment="Top">
@@ -40,6 +40,9 @@
                           ItemsSource="{Binding Getmethods}" SelectedItem="{Binding GetcurrentMethod}"/>
             </GroupBox>
         </Grid>
+        <DockPanel DockPanel.Dock="Right">
+           
+        </DockPanel>
         <DockPanel DockPanel.Dock="Right">
             <GroupBox Header="Область построения графика" DockPanel.Dock="Top">
                 <StackPanel>
@@ -112,6 +115,7 @@
                 <StackPanel Margin="5, 5, 5, 5">
                     <Button Content="Построить 3D График" Command="{Binding Build3DChart}"/>
                     <Button Content="Очистить график" Command="{Binding Clear}"/>
+                    <Button Content="Описание алгоритма" Command="{Binding Description}"/>
                     <Button Content="Рассчитать" Command="{Binding Start}"/>
                 </StackPanel>
             </GroupBox>
@@ -119,7 +123,7 @@
         <DockPanel DockPanel.Dock="Bottom">
             <GroupBox Header="Результаты поиска экстремума">
                 <StackPanel>
-                    <TextBox IsReadOnly="True" MinHeight="130"
+                    <TextBox IsReadOnly="True" MinHeight="130" MinWidth="150"
                         Text="{Binding Path = Getresult, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                         <Label Content="Округление результата"/>
@@ -128,7 +132,7 @@
                     </StackPanel>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Формализованное описание целевой функции" MaxHeight="200">
+            <GroupBox Header="Формализованное описание целевой функции" MaxHeight="300">
                 <Image Source="{Binding GetDescriptionPicture}"/>
             </GroupBox>
         </DockPanel>
@@ -138,6 +142,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn IsReadOnly="True" Header="Название" Binding="{Binding Notation}"/>
                     <DataGridTextColumn Header="Значение" Binding="{Binding Value}"/>
+                    <DataGridTextColumn IsReadOnly="True" Header="Ед. изм" Binding="{Binding UnitOfMeasName}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </GroupBox>

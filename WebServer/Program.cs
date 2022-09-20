@@ -1,5 +1,3 @@
-using Autofac;
-using AutofacDependence;
 using Microsoft.EntityFrameworkCore;
 using Repository;
 

@@ -10,6 +10,7 @@
   <ItemGroup>
     <None Remove="View\Вариант15.png" />
     <None Remove="View\Вариант18.png" />
+    <None Remove="View\Вариант19.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,10 +24,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AutofacDependence\AutofacDependence.csproj" />
-    <ProjectReference Include="..\ModelsView\ModelsView.csproj" />
     <ProjectReference Include="..\ServicesMVVM\ServicesMVVM.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="OptimizationMethods">
+      <HintPath>..\..\..\libraries\OptimizationMethods\bin\Debug\net6.0\OptimizationMethods.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +40,9 @@
     </Resource>
     <Resource Include="View\Вариант18.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="View\Вариант19.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 

@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using OptimizationMethods;
 using System.Collections.ObjectModel;
 using User.Model.FileServices;
 using User.ViewModel;
@@ -10,7 +11,6 @@ namespace User.Model
         public static ContainerBuilder GetBuilder()
         {
             var builder = new ContainerBuilder();
-            builder.RegisterType<UserViewModel>().AsSelf();
             builder.RegisterType<DialogService>().AsSelf().As<IDialogService>();
             builder.RegisterType<FileService>().AsSelf().As<IFileService>();
             builder.Register((c, p) => new Chart3DViewModel(p.Named<ObservableCollection<Point3>>("p1"))).AsSelf();

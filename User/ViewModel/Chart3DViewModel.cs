@@ -1,7 +1,6 @@
-﻿using ReactiveUI;
+﻿using OptimizationMethods;
+using ReactiveUI;
 using System.Collections.ObjectModel;
-using User.Model;
-
 
 namespace User.ViewModel
 {
